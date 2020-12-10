@@ -1,5 +1,6 @@
-package com.bjtu;
-import com.helper.Person;
+package com.helper;
+
+import com.bjtu.ArrayList;
 
 public class main2 {
     public static void main(String[] args) {

@@ -102,7 +102,6 @@ public class ArrayList<E> {
         return old;
     } // 删除index位置对应的元素
 
-    @SuppressWarnings("unchecked")
     public int indexOf(E element) {
 
         if (element == null) {

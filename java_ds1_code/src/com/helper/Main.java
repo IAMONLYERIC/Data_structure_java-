@@ -1,4 +1,5 @@
-package com.bjtu;
+package com.helper;
+import com.bjtu.ArrayList;
 
 public class Main {
     public static void main1(String[] args) {
