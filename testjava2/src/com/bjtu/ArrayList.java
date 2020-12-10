@@ -1,12 +1,12 @@
 package com.bjtu;
 
-public class ArrayList {
+public class ArrayList<E> {
 
     /**
      * size是数组元素的数量 element 为内部的数组
      */
     private int size;
-    private int[] element;
+    private E[] element;
     private static final int DEFAULT_CAPACILY = 2;
     private static final int ELEMENT_NOT_FOUND = -1;
 
@@ -16,7 +16,7 @@ public class ArrayList {
      * @param capacity 传入的初始容量
      */
     public ArrayList(int capacity) {
-        element = new int[capacity < DEFAULT_CAPACILY ? DEFAULT_CAPACILY : capacity];
+        element = (E[]) new Object[capacity < DEFAULT_CAPACILY ? DEFAULT_CAPACILY : capacity];
     }
 
     public ArrayList() {
@@ -31,11 +31,11 @@ public class ArrayList {
         return size == 0;
     } // 是否为空
 
-    public boolean contains(int element) {
+    public boolean contains(E element) {
         return indexOf(element) != ELEMENT_NOT_FOUND;
     } // 是否包含某个元素
 
-    public void add(int element) {
+    public void add(E element) {
         ensureCapacity(size+1);
         this.element[size++] = element;
     } // 添加元素到最后面
@@ -57,7 +57,7 @@ public class ArrayList {
         if(oldCapacity < capacity)
         {
             int newCapacity = oldCapacity + (oldCapacity>>1);
-            int []newElements = new int[newCapacity];
+            E []newElements = (E[]) new Object[newCapacity];
             for (int i = 0; i < size; i++) {
                 newElements[i] = element[i];
             }
@@ -66,19 +66,19 @@ public class ArrayList {
         }
     }
 
-    public int get(int index) {
+    public E get(int index) {
         check_bound(index);
-        return element[index];
+        return (E)element[index];
     } // 返回index位置对应的元素
 
-    public int set(int index, int element) {
+    public E set(int index, E element) {
         check_bound(index);
-        int old = this.element[index];
+        E old = (E)this.element[index];
         this.element[index] = element;
         return old;
     } // 设置index位置的元素
 
-    public void add(int index, int element) {
+    public void add(int index, E element) {
         check_bound(index,size+1);
         ensureCapacity(size+1);
         for (int i = size-1; i >= index; i--) {
@@ -88,9 +88,9 @@ public class ArrayList {
         size++;
     }; // 往index位置添加元素
 
-    public int remove(int index) {
+    public E remove(int index) {
         check_bound(index);
-        int old = element[index];
+        E old = element[index];
         for (int i = index; i < size - 1; i++) {
             element[i] = element[i + 1];
         }
@@ -98,7 +98,7 @@ public class ArrayList {
         return old;
     } // 删除index位置对应的元素
 
-    public int indexOf(int element) {
+    public int indexOf(E element) {
         for (int i = 0; i < size; i++) {
             if (this.element[i] == element)
                 return i;
@@ -108,7 +108,7 @@ public class ArrayList {
 
     public void clear() {
         size = 0;
-        element = new int[DEFAULT_CAPACILY];
+        element = (E[]) new Object[DEFAULT_CAPACILY];
     } // 清除所有元素
 
     @Override

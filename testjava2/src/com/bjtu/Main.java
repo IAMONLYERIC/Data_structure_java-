@@ -2,11 +2,11 @@ package com.bjtu;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList arr = new ArrayList();
+        ArrayList<Integer> arr = new ArrayList<>();
         System.out.println(arr.size());
         
 
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 100; i++)
             arr.add(i);
         System.out.println(arr);
 
@@ -15,6 +15,7 @@ public class Main {
             arr.add(i);
 
         System.out.println(arr);
+
 
 
 
