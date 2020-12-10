@@ -1,4 +1,4 @@
-package com.bjtu;
+package com.helper;
 
 public class Person {
     private final int age;
