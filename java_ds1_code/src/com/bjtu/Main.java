@@ -1,7 +1,7 @@
 package com.bjtu;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         ArrayList<Integer> arr = new ArrayList<>();
         System.out.println(arr.size());
         

@@ -6,7 +6,7 @@ public class ArrayList<E> {
      * size是数组元素的数量 element 为内部的数组
      */
     private int size;
-    private E[] element;
+    private Object[] element;
     private static final int DEFAULT_CAPACILY = 2;
     private static final int ELEMENT_NOT_FOUND = -1;
 
@@ -16,7 +16,7 @@ public class ArrayList<E> {
      * @param capacity 传入的初始容量
      */
     public ArrayList(int capacity) {
-        element = (E[]) new Object[capacity < DEFAULT_CAPACILY ? DEFAULT_CAPACILY : capacity];
+        element = new Object[capacity < DEFAULT_CAPACILY ? DEFAULT_CAPACILY : capacity];
     }
 
     public ArrayList() {
@@ -36,7 +36,7 @@ public class ArrayList<E> {
     } // 是否包含某个元素
 
     public void add(E element) {
-        ensureCapacity(size+1);
+        ensureCapacity(size + 1);
         this.element[size++] = element;
     } // 添加元素到最后面
 
@@ -45,19 +45,16 @@ public class ArrayList<E> {
             throw new IndexOutOfBoundsException("数组越界: index: " + index + " size: " + size);
     }
 
-    private void check_bound(int index, int bound)
-    {
+    private void check_bound(int index, int bound) {
         if (index < 0 || index >= bound)
             throw new IndexOutOfBoundsException("数组越界: index: " + index + " bound: " + bound);
     }
 
-    private void ensureCapacity(int capacity)
-    {
+    private void ensureCapacity(int capacity) {
         int oldCapacity = element.length;
-        if(oldCapacity < capacity)
-        {
-            int newCapacity = oldCapacity + (oldCapacity>>1);
-            E []newElements = (E[]) new Object[newCapacity];
+        if (oldCapacity < capacity) {
+            int newCapacity = oldCapacity + (oldCapacity >> 1);
+            Object[] newElements = new Object[newCapacity];
             for (int i = 0; i < size; i++) {
                 newElements[i] = element[i];
             }
@@ -66,49 +63,71 @@ public class ArrayList<E> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public E get(int index) {
         check_bound(index);
-        return (E)element[index];
+        return (E) element[index];
     } // 返回index位置对应的元素
 
+    @SuppressWarnings("unchecked")
     public E set(int index, E element) {
         check_bound(index);
-        E old = (E)this.element[index];
+        E old = (E) this.element[index];
         this.element[index] = element;
         return old;
     } // 设置index位置的元素
 
     public void add(int index, E element) {
-        check_bound(index,size+1);
-        ensureCapacity(size+1);
-        for (int i = size-1; i >= index; i--) {
-            this.element[i+1] = this.element[i];
+        check_bound(index, size + 1);
+        ensureCapacity(size + 1);
+        for (int i = size - 1; i >= index; i--) {
+            this.element[i + 1] = this.element[i];
         }
         this.element[index] = element;
         size++;
     }; // 往index位置添加元素
 
+    @SuppressWarnings("unchecked")
     public E remove(int index) {
         check_bound(index);
-        E old = element[index];
+        E old = (E) element[index];
         for (int i = index; i < size - 1; i++) {
             element[i] = element[i + 1];
         }
         size--;
+
+        // 后面向前移动的时候，最后一个元素需要清空。
+        this.element[size] = null;
+
         return old;
     } // 删除index位置对应的元素
 
+    @SuppressWarnings("unchecked")
     public int indexOf(E element) {
-        for (int i = 0; i < size; i++) {
-            if (this.element[i] == element)
-                return i;
+
+        if (element == null) {
+            for (int i = 0; i < size; i++) {
+                if (this.element[i]==null)
+                    return i;
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                    if (element.equals(this.element[i]))
+                        return i;
+            }
         }
+
+        
         return ELEMENT_NOT_FOUND;
     } // 查看元素的位置
 
     public void clear() {
+
+        // 清空对象引用，方便垃圾回收
+        for (int i = 0; i < size; i++)
+            this.element[i] = null;
         size = 0;
-        element = (E[]) new Object[DEFAULT_CAPACILY];
+        // element = new Object[DEFAULT_CAPACILY];
     } // 清除所有元素
 
     @Override
