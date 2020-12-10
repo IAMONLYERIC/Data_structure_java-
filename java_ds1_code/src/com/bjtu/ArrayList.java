@@ -1,6 +1,6 @@
 package com.bjtu;
 
-public class ArrayList<E> {
+public class ArrayList<E> implements List<E>{
 
     /**
      * size是数组元素的数量 element 为内部的数组

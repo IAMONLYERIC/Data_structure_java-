@@ -3,7 +3,7 @@ package com.helper;
 import com.bjtu.ArrayList;
 
 public class main2 {
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         ArrayList<Person> arr = new ArrayList<>();
         
         for(int i = 0; i < 10; i++)
@@ -21,9 +21,6 @@ public class main2 {
         System.out.println(arr.indexOf(null));
 
         // java.util.ArrayList
-
-
-
 
     }
 }
