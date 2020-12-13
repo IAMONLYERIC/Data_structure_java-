@@ -1,14 +1,12 @@
 package com.bjtu;
 
-public class ArrayList<E> implements List<E>{
+public class ArrayList<E> extends AbstractList<E>{
 
     /**
      * size是数组元素的数量 element 为内部的数组
      */
-    private int size;
     private Object[] element;
     private static final int DEFAULT_CAPACILY = 2;
-    private static final int ELEMENT_NOT_FOUND = -1;
 
     /**
      * 构造函数
@@ -21,33 +19,6 @@ public class ArrayList<E> implements List<E>{
 
     public ArrayList() {
         this(DEFAULT_CAPACILY);
-    }
-
-    public int size() {
-        return size;
-    } // 元素的数量
-
-    public boolean isEmpty() {
-        return size == 0;
-    } // 是否为空
-
-    public boolean contains(E element) {
-        return indexOf(element) != ELEMENT_NOT_FOUND;
-    } // 是否包含某个元素
-
-    public void add(E element) {
-        ensureCapacity(size + 1);
-        this.element[size++] = element;
-    } // 添加元素到最后面
-
-    private void check_bound(int index) {
-        if (index < 0 || index >= size)
-            throw new IndexOutOfBoundsException("数组越界: index: " + index + " size: " + size);
-    }
-
-    private void check_bound(int index, int bound) {
-        if (index < 0 || index >= bound)
-            throw new IndexOutOfBoundsException("数组越界: index: " + index + " bound: " + bound);
     }
 
     private void ensureCapacity(int capacity) {
@@ -104,6 +75,7 @@ public class ArrayList<E> implements List<E>{
 
     public int indexOf(E element) {
 
+        // 此处是允许数组中存放null元素
         if (element == null) {
             for (int i = 0; i < size; i++) {
                 if (this.element[i]==null)
@@ -111,8 +83,8 @@ public class ArrayList<E> implements List<E>{
             }
         } else {
             for (int i = 0; i < size; i++) {
-                    if (element.equals(this.element[i]))
-                        return i;
+                if (element.equals(this.element[i]))
+                    return i;
             }
         }
 
