@@ -20,7 +20,6 @@ public class main2 {
 
         System.out.println(arr.indexOf(null));
 
-        // java.util.ArrayList
 
     }
 }

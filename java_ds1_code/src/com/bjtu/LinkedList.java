@@ -24,14 +24,12 @@ public class LinkedList<E> implements List<E> {
 
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return size == 0;
     }
 
     @Override
