@@ -35,6 +35,8 @@ public class LinkedList<E> extends AbstractList<E> {
 
     @Override
     public void add(int index, E element) {
+        check_bound(index,size+1);
+
         if(index == 0){
             // 当index==1时候，在node函数中进行范围检查不能通过，所以要单独处理。
             first = new Node<E>(element,first);
@@ -50,6 +52,8 @@ public class LinkedList<E> extends AbstractList<E> {
 
     @Override
     public E remove(int index) {
+        check_bound(index);
+
         E old;
         if(index == 0){
             // 当index==1时候，在node函数中进行范围检查不能通过，所以要单独处理。
