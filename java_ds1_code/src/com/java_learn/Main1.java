@@ -14,9 +14,9 @@ public class Main1 {
 
         // System.out.println(num1.subtract(new BigInteger("1")));
 
-        some_interface in1 = new some_interface_imp();
+        // some_interface in1 = new some_interface_imp();
 
-        in1.show();
+        // in1.show();
 
 
 

@@ -1,6 +1,6 @@
 package com.helper;
 
-import com.bjtu.LinkedList;
+import com.bjtu.LinkList_P.*;
 
 public class main3 {
     public static void main3(String[] args) {
