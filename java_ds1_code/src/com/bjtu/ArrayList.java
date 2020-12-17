@@ -6,7 +6,7 @@ public class ArrayList<E> extends AbstractList<E>{
      * size是数组元素的数量 element 为内部的数组
      */
     private Object[] element;
-    private static final int DEFAULT_CAPACILY = 2;
+    private static final int DEFAULT_CAPACILY = 10;
 
     /**
      * 构造函数
@@ -70,6 +70,8 @@ public class ArrayList<E> extends AbstractList<E>{
         // 后面向前移动的时候，最后一个元素需要清空。
         this.element[size] = null;
 
+        trim();
+
         return old;
     } // 删除index位置对应的元素
 
@@ -114,6 +116,19 @@ public class ArrayList<E> extends AbstractList<E>{
         str.append("]");
 
         return str.toString();
+    }
+
+    private void trim(){
+        if(size < (element.length >> 1) && (element.length > DEFAULT_CAPACILY) ){
+            int oldCapacity = element.length;
+            int newCapacity = element.length >> 1;
+            Object[] newElements = new Object[newCapacity];
+            for (int i = 0; i < size; i++) {
+                newElements[i] = element[i];
+            }
+            element = newElements;
+            System.out.println(oldCapacity + "  缩容为： " + newCapacity);
+        }
     }
 
 }

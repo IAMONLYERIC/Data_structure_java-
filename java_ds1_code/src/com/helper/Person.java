@@ -25,7 +25,7 @@ public class Person {
 
     if(obj instanceof Person){
         Person person = (Person) obj;
-        return this.age == person.age && this.name == person.name;
+        return this.age == person.age && this.name.equals(person.name);
     }
     return false;
         
