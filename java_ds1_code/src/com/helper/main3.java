@@ -4,7 +4,7 @@ import com.bjtu.List;
 import com.bjtu.LinkList_P.*;
 
 public class main3 {
-    public static void main(String[] args) {
+    public static void main3(String[] args) {
         // LinkedList<Integer> slist = new LinkedList<>();
         josephus();
 
