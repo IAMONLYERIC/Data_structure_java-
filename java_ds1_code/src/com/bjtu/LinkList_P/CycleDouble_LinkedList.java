@@ -9,7 +9,7 @@ public class CycleDouble_LinkedList<E> extends AbstractList<E> {
     public Node<E> last;
     public Node<E> current;
 
-    private static class Node<E> {
+    public static class Node<E> {
         Node<E> prev;
         E element;
         Node<E> next;
@@ -18,6 +18,10 @@ public class CycleDouble_LinkedList<E> extends AbstractList<E> {
             this.prev = prev;
             this.element = element;
             this.next = next;
+        }
+
+        public E get(){
+            return element;
         }
     }
 
@@ -95,49 +99,7 @@ public class CycleDouble_LinkedList<E> extends AbstractList<E> {
     public E remove(int index) {
         check_bound(index);
 
-        E old;
-        if (index == 0) {
-            // 当index==1时候，在node函数中进行范围检查不能通过，所以要单独处理。
-            old = first.element;
-
-            if(size == 1){
-                first = last = null;
-            }else{
-                // Node<E> node = first;
-                first = first.next;
-
-                // 将之前的连线清空  不必要
-                // node.next = null;
-                // node.prev = null;
-
-                first.prev = last;
-                last.next = first;
-
-                
-            }
-            
-        } else {
-
-            // case： 删除最后一个元素
-            if(index == size-1){
-                old = last.element;
-                last = last.prev;
-                last.next = first;
-            }else{
-                // case : 删除非最后一个元素
-                Node<E> preNode = node(index - 1);
-                old = preNode.next.element;
-                preNode.next = preNode.next.next;
-                preNode.next.next.prev = preNode;
-            }
-        }
-
-        size--;
-
-        // 不用将index位置的节点next置为null，因为已经没有引用指向index位置的节点了，
-        // 所以该节点已经被自动释放
-
-        return old;
+        return remove(node(index));
     }
 
 
@@ -171,9 +133,9 @@ public class CycleDouble_LinkedList<E> extends AbstractList<E> {
             }else{
                 // case : 删除非最后一个元素
                 Node<E> preNode = node.prev;
-                old = preNode.next.element;
-                preNode.next = preNode.next.next;
-                preNode.next.next.prev = preNode;
+                old = node.element;
+                preNode.next = node.next;
+                node.next.prev = preNode;
             }
         }
 
@@ -268,8 +230,6 @@ public class CycleDouble_LinkedList<E> extends AbstractList<E> {
         }else{
             current = null;
         }
-        
-
         return  oldNode.element;
 
     }

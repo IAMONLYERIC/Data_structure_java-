@@ -16,8 +16,8 @@ public class main2 {
         // List<Person> arr = new ArrayList<>();
         // List<Person> arr = new LinkedList<>();
         // List<Person> arr = new LinkedList_with_head<>();
-        List<Person> arr = new CycleLinkedList<>();
-        // List<Person> arr = new CycleDouble_LinkedList<>();
+        // List<Person> arr = new CycleLinkedList<>();
+        List<Person> arr = new CycleDouble_LinkedList<>();
         // Double_LinkedList<Person> arr = new Double_LinkedList<>();
 
         arr.add(new Person(1,"Tom"));

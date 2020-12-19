@@ -6,23 +6,23 @@ import com.bjtu.LinkList_P.*;
 public class main3 {
     public static void main(String[] args) {
         // LinkedList<Integer> slist = new LinkedList<>();
+        josephus();
 
-        CycleDouble_LinkedList<Person> arr = new CycleDouble_LinkedList<>();
+    }
 
-        arr.add(new Person(1,"Tom"));
-        arr.add(new Person(2,"Jack"));
 
+    public static void josephus(){
+        CycleDouble_LinkedList<Integer> arr = new CycleDouble_LinkedList<>();
+
+        for(int i = 1; i <= 10; i++){
+            arr.add(i);
+        }
         arr.reset();
-        System.out.println(arr);
-
-        arr.remove();
-        System.out.println(arr);
-
-        System.out.println(arr.current);
-        arr.remove();
-        System.out.println(arr);
-
-        System.out.println(arr.current);
+        while(arr.size() != 1){
+            arr.next();arr.next();
+           System.out.println("remove: " + arr.remove()) ; 
+        }
+        System.out.println("幸存者为:" + arr.get(0));
 
     }
 }
