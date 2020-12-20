@@ -1,14 +1,16 @@
 package com.bjtu.Queue;
 
+import com.bjtu.LinkList_P.Double_LinkedList;
+
 @SuppressWarnings("unchecked")
-public class CircleQueue<E> {
+public class CircleDeque<E> {
     private int size;
     private Object[] elements;
     private int front; // 存储队列的前端元素下标
 
     private final int DEFAULT_CAPACITY = 10;
 
-    public CircleQueue() {
+    public CircleDeque() {
         elements = new Object[DEFAULT_CAPACITY];
         front = 0;
     }
@@ -21,14 +23,14 @@ public class CircleQueue<E> {
         return size == 0;
     }
 
-    public void enQueue(E element) {
+    public void enQueueRear(E element) {
         ensureCapacity(size + 1);
 
         elements[(front + size) % elements.length] = element;
         size++;
     }
 
-    public E deQueue() {
+    public E deQueueFront() {
         E oldElement = (E) elements[front];
 
         elements[front] = null;
@@ -38,9 +40,32 @@ public class CircleQueue<E> {
         return oldElement;
     }
 
+    public void enQueueFront(E element) {
+        ensureCapacity(size + 1);
+
+        // 如果索引时负数，则加上数组长度变换到对应位置
+        int index = (front - 1) < 0 ? front - 1 + elements.length : front - 1;
+        elements[index] = element;
+        size++;
+        front = index; // 更改头元素位置
+    }
+
+    public E deQueueRear() {
+        E oldElement = (E) elements[(front + size - 1) % elements.length];
+        elements[(front + size - 1) % elements.length] = null;
+        size--;
+
+        return oldElement;
+    }
+
     public E front() {
 
         return (E) elements[front];
+    }
+
+    public E rear() {
+
+        return (E) elements[(front + size - 1) % elements.length];
     }
 
     @Override
@@ -71,4 +96,5 @@ public class CircleQueue<E> {
             System.out.println(oldCapacity + "  扩容为： " + newCapacity);
         }
     }
+
 }
