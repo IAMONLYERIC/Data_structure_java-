@@ -3,7 +3,7 @@ package com.helper;
 import com.bjtu.Stack.Stack;
 
 public class Main_for_stack {
-    public static void main(String []args){
+    public static void main_for_stack(String []args){
 
         Stack<Integer> stack = new Stack<>();
 
