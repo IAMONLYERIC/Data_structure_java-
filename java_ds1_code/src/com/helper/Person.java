@@ -1,6 +1,6 @@
 package com.helper;
 
-public class Person {
+public class Person implements Comparable<Person>{
     private final int age;
     private final String name;
 
@@ -21,14 +21,20 @@ public class Person {
 
     @Override
     public boolean equals(Object obj) {
-    if(obj == null) return false;
+        if(obj == null) return false;
 
-    if(obj instanceof Person){
-        Person person = (Person) obj;
-        return this.age == person.age && this.name.equals(person.name);
-    }
-    return false;
+        if(obj instanceof Person){
+            Person person = (Person) obj;
+            return this.age == person.age && this.name.equals(person.name);
+        }
+        return false;
         
+    }
+
+    @Override
+    public int compareTo(Person o) {
+        
+        return this.age - o.age;
     }
     
 }

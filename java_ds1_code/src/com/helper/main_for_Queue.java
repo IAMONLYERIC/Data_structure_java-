@@ -6,7 +6,7 @@ import com.bjtu.Queue.Deque;
 import com.bjtu.Queue.Queue;
 
 public class main_for_Queue {
-    public static void main(String[] args) {
+    public static void main_for_Qu(String[] args) {
         // Queue<Integer> queue = new Queue<>();
 
         // CircleQueue<Integer> queue = new CircleQueue<>();
