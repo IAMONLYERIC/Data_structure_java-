@@ -112,6 +112,41 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         return ((Comparable) e1).compareTo(e2);
     }
 
+    public void preOrderTraverSal(){
+        preOrderTraverSal(root);
+    }
+
+    private void preOrderTraverSal(Node<E> node){
+        if(node == null) return;
+
+        System.out.print(node.element + " ");
+        preOrderTraverSal(node.left);
+        preOrderTraverSal(node.right);
+    }
+
+    public void inOrderTraverSal(){
+        inOrderTraverSal(root);
+    }
+
+    private void inOrderTraverSal(Node<E> node){
+        if(node == null) return;
+        inOrderTraverSal(node.left);
+        System.out.print(node.element + " ");
+        inOrderTraverSal(node.right);
+    }
+
+    public void postOrderTraverSal(){
+        postOrderTraverSal(root);
+    }
+
+    private void postOrderTraverSal(Node<E> node){
+        if(node == null) return;
+        
+        postOrderTraverSal(node.left);
+        postOrderTraverSal(node.right);
+        System.out.print(node.element + " ");
+    }
+
     @Override
     public Object root() {
         return root;
@@ -130,7 +165,13 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     @Override
     public Object string(Object node) {
 
-        return ((Node<E>) node).element;
+        Node<E> outNode = (Node<E>) node;
+        String parentString  = "null";
+        if(outNode.parent != null){
+            parentString = outNode.parent.element.toString();
+        }
+
+        return outNode.element + "_p(" + parentString + ")";
     }
 
 }
