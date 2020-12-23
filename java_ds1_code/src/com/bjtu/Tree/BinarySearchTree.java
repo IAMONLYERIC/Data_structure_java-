@@ -118,72 +118,157 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         return ((Comparable) e1).compareTo(e2);
     }
 
-    public void preOrderTraverSal(Visitor<E> visitor){
+    public void preOrderTraverSal(Visitor<E> visitor) {
         preOrderTraverSal(root, visitor);
     }
 
-    private void preOrderTraverSal(Node<E> node, Visitor<E> visitor){
-        if(node == null || visitor == null) return;
+    private void preOrderTraverSal(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor == null)
+            return;
 
         visitor.visit(node.element);
         preOrderTraverSal(node.left, visitor);
         preOrderTraverSal(node.right, visitor);
     }
 
-    public void inOrderTraverSal(Visitor<E> visitor){
+    public void inOrderTraverSal(Visitor<E> visitor) {
         inOrderTraverSal(root, visitor);
     }
 
-    private void inOrderTraverSal(Node<E> node, Visitor<E> visitor){
-        if(node == null || visitor == null) return;
-        
+    private void inOrderTraverSal(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor == null)
+            return;
+
         inOrderTraverSal(node.left, visitor);
         visitor.visit(node.element);
         inOrderTraverSal(node.right, visitor);
     }
 
-    public void postOrderTraverSal(Visitor<E> visitor){
+    public void postOrderTraverSal(Visitor<E> visitor) {
         postOrderTraverSal(root, visitor);
     }
 
-    private void postOrderTraverSal(Node<E> node, Visitor<E> visitor){
-        if(node == null || visitor == null) return;
+    private void postOrderTraverSal(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor == null)
+            return;
 
         postOrderTraverSal(node.left, visitor);
         postOrderTraverSal(node.right, visitor);
         visitor.visit(node.element);
     }
 
-    public void levelOrderTraverSal(Visitor<E> visitor){
+    public void levelOrderTraverSal(Visitor<E> visitor) {
         levelOrderTraverSal(root, visitor);
     }
 
-    private void levelOrderTraverSal(Node<E> node, Visitor<E> visitor){
+    private void levelOrderTraverSal(Node<E> node, Visitor<E> visitor) {
         /**
-         * 1. 将根节点入队
-         * 2. 只要队列不为空，先访问栈顶元素
-         * 3. 依次将左右节点入队（只要不为空）
+         * 1. 将根节点入队 2. 只要队列不为空，先访问栈顶元素 3. 依次将左右节点入队（只要不为空）
          */
 
-        if(node == null) return;
-        // 此处做为队列使用，因为java中的链表实现了队列的接口   
+        if (node == null)
+            return;
+        // 此处做为队列使用，因为java中的链表实现了队列的接口
         LinkedList<Node<E>> queue = new LinkedList<>();
-        
+
         queue.offer(node);
 
         Node<E> topNode;
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             topNode = queue.poll();
             visitor.visit(topNode.element);
 
-            if(topNode.left != null){
+            if (topNode.left != null) {
                 queue.offer(topNode.left);
             }
-            if(topNode.right != null){
+            if (topNode.right != null) {
                 queue.offer(topNode.right);
             }
 
         }
+
+    }
+
+    /**
+     * 对二叉树进行前序树状打印 7 【L】4 【L】【L】2 【L】【L】【L】1 【L】【L】【R】3 【L】【R】5 【R】9 【R】【L】8
+     * 【R】【R】11 【R】【R】【R】12
+     */
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        toString(root, sb, "");
+
+        return sb.toString();
+    }
+
+    private void toString(Node<E> node, StringBuilder sb, String prefix) {
+
+        if (node == null)
+            return;
+
+        sb.append(prefix).append(node.element).append("\n");
+        toString(node.left, sb, prefix + "【L】");
+        toString(node.right, sb, prefix + "【R】");
+    }
+
+    // 获取二叉树的高度
+    public int height() {
+        return height(root);
+    }
+
+    private int height(Node<E> node){
+
+        // 方法 1 递归
+        // if(node.left == null && node.right == null ) return 1;
+        // if(node.left != null && node.right != null) return Math.max(height(node.left), height(node.right)) + 1;
+        // if(node.left != null) return height(node.left) + 1;
+        // if(node.right != null) return height(node.right) + 1;
+        // return 0;
+
+        // 方法 2 递归
+        if(node == null) return 0;
+        return Math.max(height(node.left), height(node.right)) + 1;
+
+    }
+
+    // 方法 3  迭代方式求树的高度
+    public int height_loop(){
+        
+        if (root == null)
+            return 0;
+        // 此处做为队列使用，因为java中的链表实现了队列的接口
+        LinkedList<Node<E>> queue = new LinkedList<>();
+
+        queue.offer(root);
+        int treeHeight = 0;
+        int thisLevelSize = 1;
+        int nextLevelSize = 0;
+
+        Node<E> topNode;
+        while (!queue.isEmpty()) {
+            topNode = queue.poll();
+             thisLevelSize--;
+
+            if (topNode.left != null) {
+                queue.offer(topNode.left);
+                nextLevelSize++;
+            }
+            if (topNode.right != null) {
+                queue.offer(topNode.right);
+                nextLevelSize++;
+            }
+
+           
+            if(thisLevelSize == 0){
+                treeHeight++;
+                thisLevelSize = nextLevelSize;
+                nextLevelSize = 0;
+            } 
+
+        }
+
+        return treeHeight;
 
     }
 
@@ -206,8 +291,8 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     public Object string(Object node) {
 
         Node<E> outNode = (Node<E>) node;
-        String parentString  = "null";
-        if(outNode.parent != null){
+        String parentString = "null";
+        if (outNode.parent != null) {
             parentString = outNode.parent.element.toString();
         }
 
