@@ -1,6 +1,5 @@
 package com.helper;
 
-import java.io.IOException;
 import java.util.Comparator;
 
 import com.bjtu.Tree.BinarySearchTree;
@@ -34,9 +33,12 @@ public class main_for_bst {
         }
 
         BinaryTrees.println(bst1);
-        bst1.preOrderTraverSal();
-        bst1.inOrderTraverSal();
-        bst1.postOrderTraverSal();
+        // bst1.preOrderTraverSal();
+        // bst1.inOrderTraverSal();
+        // bst1.postOrderTraverSal();
+        bst1.levelOrderTraverSal();
+        
+
 
     }
 

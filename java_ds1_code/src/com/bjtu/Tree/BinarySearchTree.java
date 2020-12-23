@@ -1,6 +1,7 @@
 package com.bjtu.Tree;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 
 import com.bjtu.Tree.Printer.BinaryTreeInfo;
 
@@ -145,6 +146,39 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         postOrderTraverSal(node.left);
         postOrderTraverSal(node.right);
         System.out.print(node.element + " ");
+    }
+
+    public void levelOrderTraverSal(){
+        levelOrderTraverSal(root);
+    }
+
+    private void levelOrderTraverSal(Node<E> node){
+        /**
+         * 1. 将根节点入队
+         * 2. 只要队列不为空，先访问栈顶元素
+         * 3. 依次将左右节点入队（只要不为空）
+         */
+
+        if(node == null) return;
+        // 此处做为队列使用，因为java中的链表实现了队列的接口   
+        LinkedList<Node<E>> queue = new LinkedList<>();
+        
+        queue.offer(node);
+
+        Node<E> topNode;
+        while(!queue.isEmpty()){
+            topNode = queue.poll();
+            System.out.println(topNode.element);
+
+            if(topNode.left != null){
+                queue.offer(topNode.left);
+            }
+            if(topNode.right != null){
+                queue.offer(topNode.right);
+            }
+
+        }
+
     }
 
     @Override
