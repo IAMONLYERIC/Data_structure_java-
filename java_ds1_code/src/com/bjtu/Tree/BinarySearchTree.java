@@ -38,6 +38,11 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
     }
 
+    // 创建该公共接口，供遍历时访问节点使用
+    public static interface Visitor<E> {
+        void visit(E element);
+    }
+
     public int size() {
         return size;
     }
@@ -113,46 +118,47 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         return ((Comparable) e1).compareTo(e2);
     }
 
-    public void preOrderTraverSal(){
-        preOrderTraverSal(root);
+    public void preOrderTraverSal(Visitor<E> visitor){
+        preOrderTraverSal(root, visitor);
     }
 
-    private void preOrderTraverSal(Node<E> node){
-        if(node == null) return;
+    private void preOrderTraverSal(Node<E> node, Visitor<E> visitor){
+        if(node == null || visitor == null) return;
 
-        System.out.print(node.element + " ");
-        preOrderTraverSal(node.left);
-        preOrderTraverSal(node.right);
+        visitor.visit(node.element);
+        preOrderTraverSal(node.left, visitor);
+        preOrderTraverSal(node.right, visitor);
     }
 
-    public void inOrderTraverSal(){
-        inOrderTraverSal(root);
+    public void inOrderTraverSal(Visitor<E> visitor){
+        inOrderTraverSal(root, visitor);
     }
 
-    private void inOrderTraverSal(Node<E> node){
-        if(node == null) return;
-        inOrderTraverSal(node.left);
-        System.out.print(node.element + " ");
-        inOrderTraverSal(node.right);
-    }
-
-    public void postOrderTraverSal(){
-        postOrderTraverSal(root);
-    }
-
-    private void postOrderTraverSal(Node<E> node){
-        if(node == null) return;
+    private void inOrderTraverSal(Node<E> node, Visitor<E> visitor){
+        if(node == null || visitor == null) return;
         
-        postOrderTraverSal(node.left);
-        postOrderTraverSal(node.right);
-        System.out.print(node.element + " ");
+        inOrderTraverSal(node.left, visitor);
+        visitor.visit(node.element);
+        inOrderTraverSal(node.right, visitor);
     }
 
-    public void levelOrderTraverSal(){
-        levelOrderTraverSal(root);
+    public void postOrderTraverSal(Visitor<E> visitor){
+        postOrderTraverSal(root, visitor);
     }
 
-    private void levelOrderTraverSal(Node<E> node){
+    private void postOrderTraverSal(Node<E> node, Visitor<E> visitor){
+        if(node == null || visitor == null) return;
+
+        postOrderTraverSal(node.left, visitor);
+        postOrderTraverSal(node.right, visitor);
+        visitor.visit(node.element);
+    }
+
+    public void levelOrderTraverSal(Visitor<E> visitor){
+        levelOrderTraverSal(root, visitor);
+    }
+
+    private void levelOrderTraverSal(Node<E> node, Visitor<E> visitor){
         /**
          * 1. 将根节点入队
          * 2. 只要队列不为空，先访问栈顶元素
@@ -168,7 +174,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         Node<E> topNode;
         while(!queue.isEmpty()){
             topNode = queue.poll();
-            System.out.println(topNode.element);
+            visitor.visit(topNode.element);
 
             if(topNode.left != null){
                 queue.offer(topNode.left);

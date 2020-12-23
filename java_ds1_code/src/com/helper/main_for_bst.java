@@ -3,6 +3,7 @@ package com.helper;
 import java.util.Comparator;
 
 import com.bjtu.Tree.BinarySearchTree;
+import com.bjtu.Tree.BinarySearchTree.Visitor;
 import com.bjtu.Tree.Printer.BinaryTrees;
 import com.bjtu.Tree.Printer.Printer;
 import com.bjtu.Tree.Printer.BinaryTrees.PrintStyle;
@@ -36,7 +37,15 @@ public class main_for_bst {
         // bst1.preOrderTraverSal();
         // bst1.inOrderTraverSal();
         // bst1.postOrderTraverSal();
-        bst1.levelOrderTraverSal();
+        bst1.levelOrderTraverSal(new Visitor<Integer>(){
+
+            @Override
+            public void visit(Integer element) {
+                System.out.print(" _" + element + "_ " );
+
+            }
+
+        });
         
 
 
