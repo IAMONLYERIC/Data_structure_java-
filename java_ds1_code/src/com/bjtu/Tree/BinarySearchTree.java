@@ -242,34 +242,94 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
         queue.offer(root);
         int treeHeight = 0;
-        int thisLevelSize = 1;
-        int nextLevelSize = 0;
+        int levelSize = 1;
 
         Node<E> topNode;
         while (!queue.isEmpty()) {
             topNode = queue.poll();
-             thisLevelSize--;
+            levelSize--;
 
             if (topNode.left != null) {
                 queue.offer(topNode.left);
-                nextLevelSize++;
             }
             if (topNode.right != null) {
                 queue.offer(topNode.right);
-                nextLevelSize++;
             }
 
            
-            if(thisLevelSize == 0){
+            if(levelSize == 0){
                 treeHeight++;
-                thisLevelSize = nextLevelSize;
-                nextLevelSize = 0;
+                levelSize = queue.size(); // 当本层的所有节点都pop时，此时队列中的元素个数即为下一层的节点数量
             } 
 
         }
 
         return treeHeight;
 
+    }
+
+        /**
+         * 判断是否为完全二叉树
+         */
+    public boolean isCompleteBT(){
+        if (root == null) return false;
+
+        // 此处做为队列使用，因为java中的链表实现了队列的接口
+        LinkedList<Node<E>> queue = new LinkedList<>();
+
+        queue.offer(root);
+        Node<E> topNode;
+
+        boolean endFlag = false; // 用来指示 后面的节点时候必须为叶子节点的标记
+        while (!queue.isEmpty()) {
+            topNode = queue.poll();
+
+            // 如果已经开启了叶子节点标记，则要求节点不能有孩子节点，否则不是完全二叉树
+            if(endFlag){
+                if(topNode.left != null || topNode.right != null) return false;
+            }
+            
+            // 度为2的节点，没问题，直接入队
+            if(topNode.left != null && topNode.right != null){
+                queue.offer(topNode.left);
+                queue.offer(topNode.right);
+            }
+
+            // 有右节点没有左节点，不满足完全二叉树 ，false
+            if(topNode.left == null && topNode.right != null) return false;
+
+            // 有左节点没有右节点，说明后面的节点必须都是叶子节点才能使完全二叉树，所以在此开启标记位
+            if(topNode.left != null && topNode.right == null){
+                queue.offer(topNode.left);
+                endFlag = true;
+            }
+
+            // 没有孩子节点，说明后面的节点必须都是叶子节点才能使完全二叉树，所以在此开启标记位
+            if(topNode.left == null && topNode.right == null){
+                endFlag = true;
+            }   
+
+        }
+
+        // 上述条件满足，为完全二叉树
+        return true;
+    }
+
+    public void invertBT(){
+        invertBTNode(root);
+    }
+    private Node<E> invertBTNode(Node<E> node){
+        if(node == null) return null;
+        // if(node.left == null && node.right == null) return node;
+
+        
+
+        Node<E> left = invertBTNode(node.right);
+        Node<E> right = invertBTNode(node.left);
+        node.left = left;
+        node.right = right;
+
+        return node;
     }
 
     @Override

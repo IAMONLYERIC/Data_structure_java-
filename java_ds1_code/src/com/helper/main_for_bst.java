@@ -23,11 +23,11 @@ public class main_for_bst {
     public static void test3() {
         BinarySearchTree<Integer> bst1 = new BinarySearchTree<>();
 
-        // Integer []arr = new Integer[]{
-        // 7,4,9,2,5,8,11,3,1,12
-        // };
+        Integer []arr = new Integer[]{
+        7,4,9,2,1
+        };
 
-        Integer[] arr = new Integer[] { 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        // Integer[] arr = new Integer[] { 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 
         for (Integer integer : arr) {
             bst1.add(integer);
@@ -49,8 +49,13 @@ public class main_for_bst {
         
         // System.out.println(bst1);
 
-        System.out.println(bst1.height());
-        System.out.println(bst1.height_loop());
+        // System.out.println(bst1.height());
+        // System.out.println(bst1.height_loop());
+
+        // System.out.println(bst1.isCompleteBT());
+
+        bst1.invertBT();
+        BinaryTrees.println(bst1);
 
 
     }
