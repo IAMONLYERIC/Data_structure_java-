@@ -3,7 +3,7 @@ package com.helper;
 import java.util.Comparator;
 
 import com.bjtu.Tree.BinarySearchTree;
-import com.bjtu.Tree.BinarySearchTree.Visitor;
+import com.bjtu.Tree.BinaryTree.Visitor;
 import com.bjtu.Tree.Printer.BinaryTrees;
 import com.bjtu.Tree.Printer.Printer;
 import com.bjtu.Tree.Printer.BinaryTrees.PrintStyle;
@@ -16,8 +16,8 @@ public class main_for_bst {
         // test1();
 
         // test2();
-        // test3();
-        test4();
+        test3();
+        // test4();
 
     }
 
