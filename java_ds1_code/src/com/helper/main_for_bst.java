@@ -24,7 +24,8 @@ public class main_for_bst {
         BinarySearchTree<Integer> bst1 = new BinarySearchTree<>();
 
         Integer []arr = new Integer[]{
-        7,4,9,2,1
+        // 7,4,9,2,1
+        4,2,5,1,3,6
         };
 
         // Integer[] arr = new Integer[] { 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };

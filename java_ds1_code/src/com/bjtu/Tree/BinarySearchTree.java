@@ -217,24 +217,26 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         return height(root);
     }
 
-    private int height(Node<E> node){
+    private int height(Node<E> node) {
 
         // 方法 1 递归
         // if(node.left == null && node.right == null ) return 1;
-        // if(node.left != null && node.right != null) return Math.max(height(node.left), height(node.right)) + 1;
+        // if(node.left != null && node.right != null) return
+        // Math.max(height(node.left), height(node.right)) + 1;
         // if(node.left != null) return height(node.left) + 1;
         // if(node.right != null) return height(node.right) + 1;
         // return 0;
 
         // 方法 2 递归
-        if(node == null) return 0;
+        if (node == null)
+            return 0;
         return Math.max(height(node.left), height(node.right)) + 1;
 
     }
 
-    // 方法 3  迭代方式求树的高度
-    public int height_loop(){
-        
+    // 方法 3 迭代方式求树的高度
+    public int height_loop() {
+
         if (root == null)
             return 0;
         // 此处做为队列使用，因为java中的链表实现了队列的接口
@@ -256,11 +258,10 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
                 queue.offer(topNode.right);
             }
 
-           
-            if(levelSize == 0){
+            if (levelSize == 0) {
                 treeHeight++;
                 levelSize = queue.size(); // 当本层的所有节点都pop时，此时队列中的元素个数即为下一层的节点数量
-            } 
+            }
 
         }
 
@@ -268,11 +269,12 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
     }
 
-        /**
-         * 判断是否为完全二叉树
-         */
-    public boolean isCompleteBT(){
-        if (root == null) return false;
+    /**
+     * 判断是否为完全二叉树
+     */
+    public boolean isCompleteBT() {
+        if (root == null)
+            return false;
 
         // 此处做为队列使用，因为java中的链表实现了队列的接口
         LinkedList<Node<E>> queue = new LinkedList<>();
@@ -285,29 +287,31 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
             topNode = queue.poll();
 
             // 如果已经开启了叶子节点标记，则要求节点不能有孩子节点，否则不是完全二叉树
-            if(endFlag){
-                if(topNode.left != null || topNode.right != null) return false;
+            if (endFlag) {
+                if (topNode.left != null || topNode.right != null)
+                    return false;
             }
-            
+
             // 度为2的节点，没问题，直接入队
-            if(topNode.left != null && topNode.right != null){
+            if (topNode.left != null && topNode.right != null) {
                 queue.offer(topNode.left);
                 queue.offer(topNode.right);
             }
 
             // 有右节点没有左节点，不满足完全二叉树 ，false
-            if(topNode.left == null && topNode.right != null) return false;
+            if (topNode.left == null && topNode.right != null)
+                return false;
 
             // 有左节点没有右节点，说明后面的节点必须都是叶子节点才能使完全二叉树，所以在此开启标记位
-            if(topNode.left != null && topNode.right == null){
+            if (topNode.left != null && topNode.right == null) {
                 queue.offer(topNode.left);
                 endFlag = true;
             }
 
             // 没有孩子节点，说明后面的节点必须都是叶子节点才能使完全二叉树，所以在此开启标记位
-            if(topNode.left == null && topNode.right == null){
+            if (topNode.left == null && topNode.right == null) {
                 endFlag = true;
-            }   
+            }
 
         }
 
@@ -315,21 +319,134 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         return true;
     }
 
-    public void invertBT(){
-        invertBTNode(root);
+    public void invertBT() {
+        // invertBTNode(root);
+        // invertBTNode_inOrder(root);
+        invertBTNode_levelOrder(root);
     }
-    private Node<E> invertBTNode(Node<E> node){
-        if(node == null) return null;
+
+    private Node<E> invertBTNode(Node<E> node) {
+        if (node == null)
+            return null;
         // if(node.left == null && node.right == null) return node;
 
-        
+        Node<E> tmpNode = node.left;
+        node.left = node.right;
+        node.right = tmpNode;
 
-        Node<E> left = invertBTNode(node.right);
-        Node<E> right = invertBTNode(node.left);
-        node.left = left;
-        node.right = right;
+        invertBTNode(node.left);
+        invertBTNode(node.right);
 
         return node;
+    }
+
+    private Node<E> invertBTNode_inOrder(Node<E> node) {
+        if (node == null)
+            return null;
+        // if(node.left == null && node.right == null) return node;
+
+        invertBTNode(node.left);
+
+        Node<E> tmpNode = node.left;
+        node.left = node.right;
+        node.right = tmpNode;
+
+        invertBTNode(node.left); // 此时原来的右子树，实际成为交换后的左子树
+
+        return node;
+    }
+
+    private Node<E> invertBTNode_levelOrder(Node<E> node) {
+        if (node == null)
+            return null;
+        // if(node.left == null && node.right == null) return node;
+
+        // 此处做为队列使用，因为java中的链表实现了队列的接口
+        LinkedList<Node<E>> queue = new LinkedList<>();
+        queue.offer(node);
+
+        Node<E> topNode;
+        while (!queue.isEmpty()) {
+            topNode = queue.poll();
+
+            Node<E> tmpNode = topNode.left;
+            topNode.left = topNode.right;
+            topNode.right = tmpNode;
+
+            if (topNode.left != null) {
+                queue.offer(topNode.left);
+            }
+            if (topNode.right != null) {
+                queue.offer(topNode.right);
+            }
+
+        }
+
+        return node;
+    }
+
+    // 寻找中序遍历下的前一个节点： 前驱结点
+    private Node<E> predesessor(Node<E> node) {
+        if (node == null)
+            return null;
+
+        // 存在左孩子： 顺着左孩子的右节点一路找下去，左孩子的最后一个节点必然就是自己的前驱节点
+        if (node.left != null) {
+            node = node.left;
+            while (node.right != null)
+                node = node.right;
+            return node;
+        }
+
+        // 来到此处，肯定不存在左孩子，则去找父节点
+       while(node.parent != null && node == node.parent.left){
+           node = node.parent;
+       }
+
+       // 父节点为空，或者找到了一个节点为该父节点的右孩子
+       return node.parent;
+
+        // // 不存在左孩子，但是存在父节点：
+        // if (node.left == null && node.parent != null) {
+
+        //     // 顺着父节点向前找，一直找到属于右孩子分支的父节点
+        //     while(node.parent != null){
+        //         if(node == node.parent.right) return node.parent;
+        //         node = node.parent;
+        //     }
+
+        //     // 如果没找到，则没有前驱，比如第一个节点
+        //     return null;
+        // }
+
+        // // 即不存在左孩子，也不存在父节点，没有前驱
+        // if (node.left == null && node.parent == null) {
+        //     return null;
+        // }
+
+        // return null;
+    }
+
+    // 寻找中序遍历下的前一个节点： 前驱结点
+    private Node<E> succeser(Node<E> node) {
+        if (node == null)
+            return null;
+
+        // 存在右孩子： 顺着右孩子的左节点一路找下去，右孩子的第一个节点必然就是自己的后继节点
+        if (node.right != null) {
+            node = node.right;
+            while (node.left != null)
+                node = node.left;
+            return node;
+        }
+
+        // 来到此处，肯定不存在右孩子，则去找父节点
+       while(node.parent != null && node == node.parent.right){
+           node = node.parent;
+       }
+
+       // 父节点为空，或者找到了一个节点为该父节点的左孩子
+       return node.parent;
     }
 
     @Override
