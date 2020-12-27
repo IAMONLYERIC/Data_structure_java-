@@ -53,11 +53,11 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
     public void add(E element) {
         elementNotNullCheck(element); // 不允许存放空节点
+        size++;
 
         // 添加的是第一个节点
         if (root == null) {
             root = new Node<E>(element, null);
-            size++;
             return;
         }
 
@@ -91,14 +91,88 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     }
 
     public boolean contains(E element) {
-        return false;
+        return node(element) != null;
     }
 
     public void clear() {
-
+        root = null;
+        size = 0;
     }
 
     public E remove(E element) {
+        return remove(node(element));
+    }
+
+    private E remove(Node<E> node) {
+        if (node == null)
+            return null;
+        size --;
+
+        E  oldElement = node.element;
+
+        // node是度为2的节点
+        if (node.left != null && node.right != null) {
+            // 找到后继节点并且用后继节点的元素进行替代
+            Node<E> suss = succeser(node);
+            node.element = suss.element;
+
+            // 接下来将node指向后继节点，进行删除
+            node = suss;
+        }
+
+        // 此时node必为度为1或0的节点
+        Node<E> replacement = node.left != null ? node.left : node.right;
+        if(replacement != null){ // 度为1的节点
+
+            if(node.parent == null){ // 有可能该节点没有父节点，即是根节点的情况。
+                root = replacement;
+                root.parent = null;
+                return oldElement;
+            }
+
+            if(node == node.parent.left) {
+                node.parent.left = replacement;
+                replacement.parent = node.parent;
+            }else{
+                node.parent.right = replacement;
+                replacement.parent = node.parent;
+            }
+
+        }else {// 度为0的节点: 
+
+            if(node.parent == null){ // 有可能该叶子节点没有父节点，即只有一个根节点的情况。
+                root = null;
+                return oldElement;
+            }
+
+            // 存在父节点的叶子节点，判断该节点属于父节点哪个分支
+            if(node == node.parent.left) {
+                node.parent.left = null;
+            }else{
+                node.parent.right = null;
+            }
+
+        }
+
+
+        return oldElement;
+    }
+
+    private Node<E> node(E element) {
+        Node<E> node = root;
+
+        while (node != null) {
+            int cmp = compare(element, node.element);
+            if (cmp == 0) {
+                return node;
+            }
+            if (cmp > 0) {
+                node = node.right;
+            } else {
+                node = node.left;
+            }
+        }
+
         return null;
     }
 
@@ -399,29 +473,29 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
 
         // 来到此处，肯定不存在左孩子，则去找父节点
-       while(node.parent != null && node == node.parent.left){
-           node = node.parent;
-       }
+        while (node.parent != null && node == node.parent.left) {
+            node = node.parent;
+        }
 
-       // 父节点为空，或者找到了一个节点为该父节点的右孩子
-       return node.parent;
+        // 父节点为空，或者找到了一个节点为该父节点的右孩子
+        return node.parent;
 
         // // 不存在左孩子，但是存在父节点：
         // if (node.left == null && node.parent != null) {
 
-        //     // 顺着父节点向前找，一直找到属于右孩子分支的父节点
-        //     while(node.parent != null){
-        //         if(node == node.parent.right) return node.parent;
-        //         node = node.parent;
-        //     }
+        // // 顺着父节点向前找，一直找到属于右孩子分支的父节点
+        // while(node.parent != null){
+        // if(node == node.parent.right) return node.parent;
+        // node = node.parent;
+        // }
 
-        //     // 如果没找到，则没有前驱，比如第一个节点
-        //     return null;
+        // // 如果没找到，则没有前驱，比如第一个节点
+        // return null;
         // }
 
         // // 即不存在左孩子，也不存在父节点，没有前驱
         // if (node.left == null && node.parent == null) {
-        //     return null;
+        // return null;
         // }
 
         // return null;
@@ -441,12 +515,12 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
 
         // 来到此处，肯定不存在右孩子，则去找父节点
-       while(node.parent != null && node == node.parent.right){
-           node = node.parent;
-       }
+        while (node.parent != null && node == node.parent.right) {
+            node = node.parent;
+        }
 
-       // 父节点为空，或者找到了一个节点为该父节点的左孩子
-       return node.parent;
+        // 父节点为空，或者找到了一个节点为该父节点的左孩子
+        return node.parent;
     }
 
     @Override

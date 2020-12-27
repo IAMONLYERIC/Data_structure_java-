@@ -16,8 +16,37 @@ public class main_for_bst {
         // test1();
 
         // test2();
-        test3();
+        // test3();
+        test4();
 
+    }
+
+    public static void test4(){
+        BinarySearchTree<Integer> bst1 = new BinarySearchTree<>();
+
+        Integer []arr = new Integer[]{
+        // 7,4,9,2,1
+        4,2,5,1,3,6
+        };
+
+        // Integer[] arr = new Integer[] { 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+
+        for (Integer integer : arr) {
+            bst1.add(integer);
+            System.out.println(bst1.size());
+        }
+
+        BinaryTrees.println(bst1);
+
+        bst1.remove(5);
+        System.out.println(bst1.size());
+        BinaryTrees.println(bst1);
+        bst1.remove(4);
+        System.out.println(bst1.size());
+        BinaryTrees.println(bst1);
+        bst1.remove(6);
+        System.out.println(bst1.size());
+        BinaryTrees.println(bst1);
     }
 
     public static void test3() {
