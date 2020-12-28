@@ -13,7 +13,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
      * 如果没有自定义比较器，则要求传入的类型必须实现了comparable接口，则强制转换该对象为 comparable接口实例，然后进行比较。 3.
      * 如果上述两项都没满足，则报错。
      */
-    private Comparator<E> comparator;
+    protected Comparator<E> comparator;
 
     public BinarySearchTree(Comparator<E> comparator) {
         this.comparator = comparator;
@@ -29,6 +29,10 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
     }
     // 创建该公共接口，供遍历时访问节点使用
     
+    // 此方法是为了方便子类 AVL RB树等定义自己的节点
+    protected Node<E> createNode(E element, Node<E> parent){
+        return new Node(element, parent);
+    }
 
     public void add(E element) {
         elementNotNullCheck(element); // 不允许存放空节点
@@ -36,7 +40,8 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
 
         // 添加的是第一个节点
         if (root == null) {
-            root = new Node<E>(element, null);
+            root = createNode(element, null);
+            afterAdd(root);
             return;
         }
 
@@ -51,14 +56,16 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
                 if (node.right != null) {
                     node = node.right;
                 } else {
-                    node.right = new Node<E>(element, node);
+                    node.right = createNode(element, node);
+                    afterAdd(node.right);
                     break;
                 }
             } else if (compare_res < 0) {
                 if (node.left != null) {
                     node = node.left;
                 } else {
-                    node.left = new Node<E>(element, node);
+                    node.left = createNode(element, node);
+                    afterAdd(node.left);
                     break;
                 }
             } else {
@@ -69,7 +76,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
 
     }
 
-    
+    protected void afterAdd(Node<E> node){}
 
     public E remove(E element) {
         return remove(node(element));

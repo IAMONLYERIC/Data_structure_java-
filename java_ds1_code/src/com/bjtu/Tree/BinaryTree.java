@@ -9,12 +9,12 @@ public class BinaryTree<E> implements BinaryTreeInfo{
     protected int size;
     protected Node<E> root;
 
-    protected class Node<E> {
+    protected static class Node<E> {
         E element;
         Node<E> left;
         Node<E> right;
         Node<E> parent;
-
+        
         Node(E element, Node<E> parent) {
             this.element = element;
             this.parent = parent;
