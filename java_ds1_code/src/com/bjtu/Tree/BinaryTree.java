@@ -19,6 +19,14 @@ public class BinaryTree<E> implements BinaryTreeInfo{
             this.element = element;
             this.parent = parent;
         }
+
+        boolean isLeftChild(){
+            return parent != null && this == parent.left; 
+        }
+
+        boolean isRightChild(){
+            return parent != null && this == parent.right; 
+        }
     }
 
     public static interface Visitor<E> {
@@ -354,6 +362,8 @@ public class BinaryTree<E> implements BinaryTreeInfo{
         return node.parent;
     }
 
+    
+
     @Override
     public Object root() {
         return root;
@@ -372,13 +382,14 @@ public class BinaryTree<E> implements BinaryTreeInfo{
     @Override
     public Object string(Object node) {
 
-        Node<E> outNode = (Node<E>) node;
-        String parentString = "null";
-        if (outNode.parent != null) {
-            parentString = outNode.parent.element.toString();
-        }
+        // Node<E> outNode = (Node<E>) node;
+        // String parentString = "null";
+        // if (outNode.parent != null) {
+        //     parentString = outNode.parent.element.toString();
+        // }
 
-        return outNode.element + "_p(" + parentString + ")";
+        // return outNode.element + "_p(" + parentString + ")";
+        return node;
     }
 
 }

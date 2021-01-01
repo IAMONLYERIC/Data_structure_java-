@@ -11,7 +11,7 @@ import com.bjtu.Tree.Printer.BinaryTrees.PrintStyle;
 public class main_for_bst {
 
     
-    public static void main(String[] args) {
+    public static void main_for_bst_(String[] args) {
 
         // test1();
 
