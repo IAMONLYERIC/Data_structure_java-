@@ -7,11 +7,9 @@ import com.bjtu.Tree.Printer.BinaryTrees;
 
 public class Main_for_avl {
 
-    public static void main(String[] args) {
+    public static void main_for_avl(String[] args) {
 
-        int [] arr = new int[]{
-            1,2,3,4,5,6,7,8,9,10
-        };
+        int[] arr = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
         BinarySearchTree<Integer> bst = new AVLTree<>();
 
@@ -20,6 +18,13 @@ public class Main_for_avl {
         }
 
         BinaryTrees.println(bst);
+
+        for (int i : arr) {
+            bst.remove(i);
+            System.out.println("[" + i + "]");
+            BinaryTrees.println(bst);
+            System.out.println("---------------------------------------------------------------------------");
+        }
     }
-    
+
 }

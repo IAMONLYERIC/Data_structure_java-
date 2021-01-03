@@ -3,7 +3,7 @@ package com.bjtu.Tree;
 import java.util.Comparator;
 
 @SuppressWarnings("unchecked")
-public class AVLTree<E> extends BinarySearchTree<E> {
+public class AVLTree<E> extends BBST<E> {
 
     public AVLTree(Comparator<E> comparator) {
         super(comparator);
@@ -13,21 +13,28 @@ public class AVLTree<E> extends BinarySearchTree<E> {
         this(null);
     }
 
+    // 用于删除节点之后，见BST中remove函数里面. 与afterAdd函数只差一个break，因为删除之后可以所有的祖父节点全部失衡
+    @Override
+    protected void afterRemove(Node<E> node) {
+        while ((node = node.parent) != null) {
+            if (isBalanced(node)) { // 当前节点平衡，只需要更新高度
+                updateHeight(node);
+            } else { // 节点不平衡，需要调整并且更新高度； 此时找到的节点为最高的不平衡的节点
+                rebalance(node);
+            }
+        }
+    }
+
     // 用于添加节点之后，见BST中add函数里面
     @Override
     protected void afterAdd(Node<E> node) {
 
         while ((node = node.parent) != null) {
             if (isBalanced(node)) { // 当前节点平衡，只需要更新高度
-
                 updateHeight(node);
-
             } else { // 节点不平衡，需要调整并且更新高度； 此时找到的节点为最高的不平衡的节点
-
                 rebalance(node);
-
                 break; // 只要node恢复平衡，则整棵树都会恢复平衡
-
             }
         }
 
@@ -38,7 +45,7 @@ public class AVLTree<E> extends BinarySearchTree<E> {
      * 
      * @param grand
      */
-    private void rebalance(Node<E> grand) {
+    private void rebalance2(Node<E> grand) {
         Node<E> parent = ((AVLNode<E>) grand).tallerChild();
         Node<E> node = ((AVLNode<E>) parent).tallerChild();
 
@@ -63,62 +70,64 @@ public class AVLTree<E> extends BinarySearchTree<E> {
         }
     }
 
-    private void rotateLeft(Node<E> grand) {
-        Node<E> parent = grand.right;
-        grand.right = parent.left;
-        parent.left = grand;
+    /**
+     * 恢复不平衡节点的平衡： 这种方法为统一旋转方式
+     * 
+     * @param grand
+     */
+    private void rebalance(Node<E> grand) {
+        Node<E> parent = ((AVLNode<E>) grand).tallerChild();
+        Node<E> node = ((AVLNode<E>) parent).tallerChild();
 
-        // 更新parent节点的parent属性
-        parent.parent = grand.parent;
-        if (grand.isLeftChild()) {
-            grand.parent.left = parent;
-        } else if (grand.isRightChild()) {
-            grand.parent.right = parent;
-        } else { // grand.parent == null情况 即现在的parent是root节点
-            root = parent;
+        if (parent.isLeftChild()) { // L
+
+            if (node.isLeftChild()) { // LL
+                rotate(grand, node.left, node, node.right, parent, parent.right, grand, grand.right);
+            } else { // LR
+                rotate(grand, parent.left, parent, node.left, node, node.right, grand, grand.right);
+            }
+
+        } else { // R
+            if (node.isLeftChild()) { // RL
+                rotate(grand, grand.left, grand, node.left, node, node.right, parent, parent.right);
+            } else { // RR
+                rotate(grand, grand.left, grand, parent.left, parent, node.left, node, node.right);
+            }
         }
-
-        // 跟新grand.right的parent
-        if (grand.right != null) {
-            grand.right.parent = grand;
-        }
-
-        // 更新grand.parent属性
-        grand.parent = parent;
-
-        // 更新 g,p高度,从低往高更新
-        updateHeight(grand);
-        updateHeight(parent);
-
     }
 
-    private void rotateRight(Node<E> grand) {
+    @Override
+    protected void rotate(Node<E> r, Node<E> a, Node<E> b, Node<E> c, Node<E> d, Node<E> e, Node<E> f, Node<E> g) {
+        super.rotate(r, a, b, c, d, e, f, g);
+        updateHeight(b);
+        updateHeight(f);
+        updateHeight(d);
+    }
+
+    @Override
+    protected void rotateLeft(Node<E> grand) {
         Node<E> parent = grand.left;
-        grand.left = parent.right;
-        parent.right = grand;
 
-        // 更新parent节点的parent属性
-        parent.parent = grand.parent;
-        if (grand.isLeftChild()) {
-            grand.parent.left = parent;
-        } else if (grand.isRightChild()) {
-            grand.parent.right = parent;
-        } else { // grand.parent == null情况 即现在的parent是root节点
-            root = parent;
-        }
-
-        // 更新grand.left的parent
-        if (grand.left != null) {
-            grand.left.parent = grand;
-        }
-
-        // 更新grand.parent属性
-        grand.parent = parent;
-
+        super.rotateLeft(grand);
         // 更新 g,p高度,从低往高更新
+
         updateHeight(grand);
         updateHeight(parent);
     }
+
+    @Override
+    protected void rotateRight(Node<E> grand) {
+
+        Node<E> parent = grand.left;
+
+        super.rotateRight(grand);
+        // 更新 g,p高度,从低往高更新
+        
+        updateHeight(grand);
+        updateHeight(parent);
+    }
+
+    
 
     @Override
     protected Node<E> createNode(E element, Node<E> parent) {

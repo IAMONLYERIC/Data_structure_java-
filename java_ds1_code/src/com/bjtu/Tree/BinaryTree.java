@@ -3,9 +3,8 @@ package com.bjtu.Tree;
 import java.util.LinkedList;
 import com.bjtu.Tree.Printer.BinaryTreeInfo;
 
-
 @SuppressWarnings("unchecked")
-public class BinaryTree<E> implements BinaryTreeInfo{
+public class BinaryTree<E> implements BinaryTreeInfo {
     protected int size;
     protected Node<E> root;
 
@@ -14,18 +13,38 @@ public class BinaryTree<E> implements BinaryTreeInfo{
         Node<E> left;
         Node<E> right;
         Node<E> parent;
-        
+
         Node(E element, Node<E> parent) {
             this.element = element;
             this.parent = parent;
         }
 
-        boolean isLeftChild(){
-            return parent != null && this == parent.left; 
+        boolean isLeftChild() {
+            return parent != null && this == parent.left;
         }
 
-        boolean isRightChild(){
-            return parent != null && this == parent.right; 
+        boolean isRightChild() {
+            return parent != null && this == parent.right;
+        }
+
+        public boolean isLeaf() {
+            return left == null && right == null;
+        }
+
+        public boolean hasTwoChildren() {
+            return left != null && right != null;
+        }
+
+        public Node<E> sibling() {
+            if (isLeftChild()) {
+                return parent.right;
+            }
+
+            if (isRightChild()) {
+                return parent.left;
+            }
+
+            return null;
         }
     }
 
@@ -40,8 +59,6 @@ public class BinaryTree<E> implements BinaryTreeInfo{
     public boolean isEmpty() {
         return size == 0;
     }
-
-    
 
     public void clear() {
         root = null;
@@ -362,8 +379,6 @@ public class BinaryTree<E> implements BinaryTreeInfo{
         return node.parent;
     }
 
-    
-
     @Override
     public Object root() {
         return root;
@@ -385,7 +400,7 @@ public class BinaryTree<E> implements BinaryTreeInfo{
         // Node<E> outNode = (Node<E>) node;
         // String parentString = "null";
         // if (outNode.parent != null) {
-        //     parentString = outNode.parent.element.toString();
+        // parentString = outNode.parent.element.toString();
         // }
 
         // return outNode.element + "_p(" + parentString + ")";
