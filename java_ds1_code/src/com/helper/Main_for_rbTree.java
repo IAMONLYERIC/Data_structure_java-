@@ -1,24 +1,23 @@
 package com.helper;
 
+import com.bjtu.Tree.BBST;
 import com.bjtu.Tree.BinarySearchTree;
 import com.bjtu.Tree.RBTree;
 import com.bjtu.Tree.Printer.BinaryTrees;
 
 public class Main_for_rbTree {
-    
+
     public static void main(String[] args) {
 
-        int[] arr = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        int[] arr = new int[] { 70, 56, 87, 22, 62, 74, 96, 20, 55, 68, 90, 50 };
 
-        RBTree<Integer> bst = new RBTree<>();
+        BBST<Integer> bst = new RBTree<>();
 
-        bst.add(1);
+        for (int i : arr) {
+            bst.add(i);
+        }
 
-        // for (int i : arr) {
-        //     bst.add(i);
-        // }
-
-        // BinaryTrees.println(bst);
+        BinaryTrees.println(bst);
 
     }
 

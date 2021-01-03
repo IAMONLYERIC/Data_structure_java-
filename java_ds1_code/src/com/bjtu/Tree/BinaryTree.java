@@ -404,7 +404,7 @@ public class BinaryTree<E> implements BinaryTreeInfo {
         // }
 
         // return outNode.element + "_p(" + parentString + ")";
-        return node;
+        return node; // 实现node中的toString来得到不用的效果
     }
 
 }
