@@ -15,7 +15,7 @@ public class AVLTree<E> extends BBST<E> {
 
     // 用于删除节点之后，见BST中remove函数里面. 与afterAdd函数只差一个break，因为删除之后可以所有的祖父节点全部失衡
     @Override
-    protected void afterRemove(Node<E> node) {
+    protected void afterRemove(Node<E> node, Node<E> replacement) {
         while ((node = node.parent) != null) {
             if (isBalanced(node)) { // 当前节点平衡，只需要更新高度
                 updateHeight(node);
