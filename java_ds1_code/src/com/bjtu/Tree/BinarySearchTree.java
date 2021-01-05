@@ -69,6 +69,7 @@ public class BinarySearchTree<E> extends BinaryTree<E> {
                 }
             } else {
                 node.element = element; // 如果相等则覆盖
+                size--;  // 减去刚开始的++
                 break;
             }
         }

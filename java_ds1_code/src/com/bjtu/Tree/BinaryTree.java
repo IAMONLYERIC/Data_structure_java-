@@ -49,7 +49,7 @@ public class BinaryTree<E> implements BinaryTreeInfo {
     }
 
     public static interface Visitor<E> {
-        void visit(E element);
+        public void visit(E element);
     }
 
     public int size() {

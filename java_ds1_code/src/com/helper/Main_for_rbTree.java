@@ -7,7 +7,7 @@ import com.bjtu.Tree.Printer.BinaryTrees;
 
 public class Main_for_rbTree {
 
-    public static void main(String[] args) {
+    public static void main_rb(String[] args) {
 
         int[] arr = new int[] { 70, 56, 87, 22, 62, 74, 96, 20, 55, 68, 90, 50 };
 
