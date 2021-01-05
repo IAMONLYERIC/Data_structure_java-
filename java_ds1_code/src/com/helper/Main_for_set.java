@@ -7,7 +7,7 @@ import com.bjtu.Set.Set.Visitor;
 
 public class Main_for_set {
 
-    public static void main(String[] args) {
+    public static void main_set(String[] args) {
         // test1();
         test2();
     }
