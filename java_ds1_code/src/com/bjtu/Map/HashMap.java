@@ -1,6 +1,12 @@
 package com.bjtu.Map;
 
+import java.security.Key;
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
+
+import com.bjtu.Tree.Printer.BinaryTreeInfo;
+import com.bjtu.Tree.Printer.BinaryTrees;
 
 @SuppressWarnings({ "unchecked", "unused" })
 public class HashMap<K, V> implements Map<K, V> {
@@ -90,7 +96,7 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public V get(K key) {
         Node<K, V> node = node(key);
-        return key != null ? node.value : null;
+        return node != null ? node.value : null;
     }
 
     @Override
@@ -105,18 +111,185 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(V value) {
-        // TODO Auto-generated method stub
+        // 只能通过遍历数组中每颗红黑树来实现
+        if (size == 0)
+            return false;
+
+        Queue<Node<K, V>> queue = new LinkedList<>();
+        for (int i = 0; i < table.length; i++) {
+
+            if (table[i] == null)
+                continue;
+
+            queue.offer(table[i]);
+            Node<K, V> node;
+            while (!queue.isEmpty()) {
+                node = queue.poll();
+                if (Objects.equals(node.value, value))
+                    return true;
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+        }
         return false;
     }
 
     @Override
     public void traversal(Visitor<K, V> visitor) {
-        // TODO Auto-generated method stub
+        // 只能通过遍历数组中每颗红黑树来实现
+        if (size == 0)
+            return;
+        Queue<Node<K, V>> queue = new LinkedList<>();
+        for (int i = 0; i < table.length; i++) {
+
+            if (table[i] == null)
+                continue;
+            queue.offer(table[i]);
+            Node<K, V> node;
+            while (!queue.isEmpty()) {
+                node = queue.poll();
+                if(visitor.visit(node.key, node.value)) return;
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+        }
 
     }
 
-    private V remove(Node<K,V>node){
-        return null;
+    public void print(){
+        if(size == 0) return;
+        for (int i = 0; i < table.length; i++) {
+            
+            final Node<K,V> root = table[i];
+            System.out.println("【index:" + i +  "】");
+            BinaryTrees.println(new BinaryTreeInfo(){
+                @Override
+                public Object root() {
+                    return root;
+                }
+
+                @Override
+                public Object left(Object node) {
+                    return ((Node<K, V>)node).left;
+                }
+
+                @Override
+                public Object right(Object node) {
+                    return ((Node<K, V>)node).right;
+                }
+
+                @Override
+                public Object string(Object node) {
+                    return node;
+                }  
+            });
+            System.out.println("-------------------------------------------------------------");
+
+        }
+    }
+
+    // 红黑树删除节点
+    private V remove(Node<K, V> node) {
+        if (node == null)
+            return null;
+
+        size--;
+
+        V oldValue = node.value;
+
+        if (node.hasTwoChildren()) { // 度为2的节点
+            // 找到后继节点
+            Node<K, V> s = successor(node);
+            // 用后继节点的值覆盖度为2的节点的值
+            node.key = s.key;
+            node.value = s.value;
+            // 删除后继节点
+            node = s;
+        }
+
+        // 删除node节点（node的度必然是1或者0）
+        Node<K, V> replacement = node.left != null ? node.left : node.right;
+
+        if (replacement != null) { // node是度为1的节点
+            // 更改parent
+            replacement.parent = node.parent;
+            // 更改parent的left、right的指向
+            if (node.parent == null) { // node是度为1的节点并且是根节点
+                table[index(node)] = replacement;
+            } else if (node == node.parent.left) {
+                node.parent.left = replacement;
+            } else { // node == node.parent.right
+                node.parent.right = replacement;
+            }
+
+            // 删除节点之后的处理
+            afterRemove(replacement);
+        } else if (node.parent == null) { // node是叶子节点并且是根节点
+            table[index(node)] = null;
+        } else { // node是叶子节点，但不是根节点
+            if (node == node.parent.left) {
+                node.parent.left = null;
+            } else { // node == node.parent.right
+                node.parent.right = null;
+            }
+
+            // 删除节点之后的处理
+            afterRemove(node);
+        }
+
+        return oldValue;
+    }
+
+    private Node<K, V> predecessor(Node<K, V> node) {
+        if (node == null)
+            return null;
+
+        // 前驱节点在左子树当中（left.right.right.right....）
+        Node<K, V> p = node.left;
+        if (p != null) {
+            while (p.right != null) {
+                p = p.right;
+            }
+            return p;
+        }
+
+        // 从父节点、祖父节点中寻找前驱节点
+        while (node.parent != null && node == node.parent.left) {
+            node = node.parent;
+        }
+
+        // node.parent == null
+        // node == node.parent.right
+        return node.parent;
+    }
+
+    private Node<K, V> successor(Node<K, V> node) {
+        if (node == null)
+            return null;
+
+        // 前驱节点在左子树当中（right.left.left.left....）
+        Node<K, V> p = node.right;
+        if (p != null) {
+            while (p.left != null) {
+                p = p.left;
+            }
+            return p;
+        }
+
+        // 从父节点、祖父节点中寻找前驱节点
+        while (node.parent != null && node == node.parent.right) {
+            node = node.parent;
+        }
+
+        return node.parent;
     }
 
     private int index(K key) {
@@ -422,6 +595,13 @@ public class HashMap<K, V> implements Map<K, V> {
 
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "k:" + key + "_V:" + value;
     }
 
+    }
+
+    
 }
