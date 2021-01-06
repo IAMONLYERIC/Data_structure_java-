@@ -2,7 +2,6 @@ package com.bjtu.Tree;
 
 import java.util.Comparator;
 
-@SuppressWarnings("unchecked")
 public class AVLTree<E> extends BBST<E> {
 
     public AVLTree(Comparator<E> comparator) {
@@ -45,6 +44,7 @@ public class AVLTree<E> extends BBST<E> {
      * 
      * @param grand
      */
+    @SuppressWarnings("unused")
     private void rebalance2(Node<E> grand) {
         Node<E> parent = ((AVLNode<E>) grand).tallerChild();
         Node<E> node = ((AVLNode<E>) parent).tallerChild();

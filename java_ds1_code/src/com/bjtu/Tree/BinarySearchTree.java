@@ -1,9 +1,6 @@
 package com.bjtu.Tree;
 
 import java.util.Comparator;
-import java.util.LinkedList;
-
-import com.bjtu.Tree.Printer.BinaryTreeInfo;
 
 @SuppressWarnings("unchecked")
 public class BinarySearchTree<E> extends BinaryTree<E> {

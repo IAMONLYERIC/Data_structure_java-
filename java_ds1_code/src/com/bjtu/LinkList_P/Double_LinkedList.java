@@ -1,7 +1,5 @@
 package com.bjtu.LinkList_P;
 
-import java.util.Random;
-
 import com.bjtu.AbstractList;
 
 

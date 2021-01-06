@@ -1,7 +1,5 @@
 package com.bjtu.Queue;
 
-import com.bjtu.LinkList_P.Double_LinkedList;
-
 @SuppressWarnings("unchecked")
 public class CircleDeque<E> {
     private int size;

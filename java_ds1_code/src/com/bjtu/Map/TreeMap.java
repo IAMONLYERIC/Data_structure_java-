@@ -1,5 +1,4 @@
 package com.bjtu.Map;
-
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -10,7 +9,7 @@ public class TreeMap<K, V> implements Map<K, V> {
 	private static final boolean BLACK = true;
 	private int size;
 	private Node<K, V> root;
-	private Comparator<K> comparator;
+	private Comparator<K> comparator; 
 	
 	public TreeMap() {
 		this(null);
