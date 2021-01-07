@@ -62,35 +62,39 @@ public class HashMap<K, V> implements Map<K, V> {
         Node<K, V> node = root;
         int cmp = 0;
         K k1 = key;
-        int h1 = k1 == null ? 0 : k1.hashCode();
-        Node<K,V>result = null;
+        int h1 = hash(k1);
+        Node<K, V> result = null;
+        boolean searched = false;
         do {
             parent = node;
             K k2 = node.key;
             int h2 = node.hashCode;
-            if(h1 > h2){
+            if (h1 > h2) {
                 cmp = 1;
-            }else if (h1 < h2){
+            } else if (h1 < h2) {
                 cmp = -1;
-            }else if(Objects.equals(k1, k2)){ // hash相等
-                 cmp = 0;
-            }else if(k1 != null && k2 != null
-                && k1.getClass() == k2.getClass()
-                && k1 instanceof Comparable){
-                
-                cmp = ((Comparable)k1).compareTo(k2);
-            }else{ // 线扫描，然后根据内存地址大小决定左右
-                if((node.left != null && (result = node(node.left, k1))!=null)
-                    || (node.right != null && (result = node(node.right, k1))!=null)
-                ){
+            } else if (Objects.equals(k1, k2)) { // hash相等
+                cmp = 0;
+            } else if (k1 != null && k2 != null && k1.getClass() == k2.getClass() && k1 instanceof Comparable
+                    && (cmp = ((Comparable<K>) k1).compareTo(k2)) != 0) {
+                // 由于存在两个对象不equals，但是compareTo为0的情况，这种情况下，不能认为
+                // 两个对象是同一个对象，所以不能将cmp赋值为0在此结束，而是要继续想想比较
+                // 当然，如果cmp!=0，可以直接跳转到node转向的代码
+
+            } else if (!searched) { // 先扫描，然后根据内存地址大小决定左右
+                if ((node.left != null && (result = node(node.left, k1)) != null)
+                        || (node.right != null && (result = node(node.right, k1)) != null)) {
                     cmp = 0;
                     node = result; // 为了套用后面cmp = 0的代码
-                }else { // 不存在这个key
+                } else { // 不存在这个key
+                    searched = true; // 防止后续重复扫描
                     cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
 
                 }
+            } else {
+                cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
             }
-            
+
             if (cmp > 0) {
                 node = node.right;
             } else if (cmp < 0) {
@@ -238,6 +242,7 @@ public class HashMap<K, V> implements Map<K, V> {
             // 用后继节点的值覆盖度为2的节点的值
             node.key = s.key;
             node.value = s.value;
+            node.hashCode = s.hashCode; // hashcode是跟着key走的，所以复制key的时候也要复制hashcode
             // 删除后继节点
             node = s;
         }
@@ -320,18 +325,20 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     private int index(K key) {
+        return hash(key) & (table.length - 1);
+    }
+
+    private int hash(K key) {
         if (key == null)
             return 0; // null的key都放在0号篮子里面
         int hashCode = key.hashCode();
         // 为了确保万一，先把hashcode再次混合一遍
-        // & 的目的和取模目的类似，使得到的索引不会大于数组的长度
-        return (hashCode ^ (hashCode >>> 16)) & (table.length - 1);
+        return (hashCode ^ (hashCode >>> 16));
     }
 
     private int index(Node<K, V> node) {
-        // 为了确保万一，先把hashcode再次混合一遍
         // & 的目的和取模目的类似，使得到的索引不会大于数组的长度
-        return (node.hashCode ^ (node.hashCode >>> 16)) & (table.length - 1);
+        return node.hashCode & (table.length - 1);
     }
 
     private int compare(K k1, K k2, int h1, int h2) {
@@ -352,7 +359,7 @@ public class HashMap<K, V> implements Map<K, V> {
             // 同一个类型
             // 在看看这个类型是否实现了可比较的接口
             if (k1 instanceof Comparable) {
-                return ((Comparable) k1).compareTo(k2);
+                return ((Comparable<K>) k1).compareTo(k2);
             }
         }
 
@@ -565,8 +572,9 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     private Node<K, V> node(Node<K, V> node, K k1) {
-        int h1 = k1 == null ? 0 : k1.hashCode();
+        int h1 = hash(k1);
         Node<K, V> result = null;
+        int cmp;
         while (node != null) {
             int h2 = node.hashCode;
             K k2 = node.key;
@@ -578,27 +586,24 @@ public class HashMap<K, V> implements Map<K, V> {
                 node = node.left;
             } else if (Objects.equals(k1, k2)) {
                 return node;
-            } else if (k1 != null && k2 != null && k1 instanceof Comparable) {
+            } else if (k1 != null && k2 != null && k1 instanceof Comparable
+                    && (cmp = ((Comparable<K>) k1).compareTo(k2)) != 0) {
 
-                int cmp = ((Comparable) k1).compareTo(k2);
-
-                if (cmp > 0) {
-                    node = node.right;
-                } else if (cmp < 0) {
-                    node = node.left;
-                } else {
-                    return node;
-                }
+                node = cmp > 0 ? node.right : node.left;
 
             } else if (node.right != null && (result = node(node.right, k1)) != null) { // hash相等 不具备可比较性 也不equals 或者 k1
                                                                                         // k2其中一个为null
                 return result;
-            } else if (node.left != null && (result = node(node.left, k1)) != null) { // hash相等 不具备可比较性 也不equals 或者 k1
-                                                                                      // k2其中一个为null
-                return result;
-            }else {
-                return null;
+            } else {
+                node = node.left; // 在右边没找到，所以可以将node赋值为node.left来减少递归调用次数
             }
+            // else if (node.left != null && (result = node(node.left, k1)) != null) { //
+            // hash相等 不具备可比较性 也不equals 或者 k1
+            // // k2其中一个为null
+            // return result;
+            // }else {
+            // return null;
+            // }
 
         }
         return null;
@@ -615,7 +620,8 @@ public class HashMap<K, V> implements Map<K, V> {
 
         public Node(K key, V value, Node<K, V> parent) {
             this.key = key;
-            this.hashCode = (key == null ? 0 : key.hashCode());
+            int hashCode = (key == null ? 0 : key.hashCode());
+            this.hashCode = hashCode ^ (hashCode >>> 16); // 扰动计算，更加均匀
             this.value = value;
             this.parent = parent;
         }
