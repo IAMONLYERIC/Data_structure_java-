@@ -13,6 +13,7 @@ public class HashMap<K, V> implements Map<K, V> {
     private static final boolean RED = false;
     private static final boolean BLACK = true;
     private static final int DEFAULT_CAPACITY = 1 << 4; // 数组大小为2的幂次
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
     private int size = 0;
     private Node<K, V>[] table; // 数组中存放红黑树的根节点
 
@@ -44,8 +45,9 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        int index = index(key);
+        resize();
 
+        int index = index(key);
         Node<K, V> root = table[index];
         if (root == null) { // 如果index位置还没有红黑树
             root = new Node<>(key, value, null);
@@ -194,6 +196,7 @@ public class HashMap<K, V> implements Map<K, V> {
 
     }
 
+
     public void print() {
         if (size == 0)
             return;
@@ -225,6 +228,104 @@ public class HashMap<K, V> implements Map<K, V> {
             System.out.println("-------------------------------------------------------------");
 
         }
+    }
+
+    private void resize(){
+
+        // 装填因子 <= 0.75
+        if(size / table.length <= DEFAULT_LOAD_FACTOR) return;
+
+        // 扩容
+        Node<K,V> []oldTable = table;
+        table = new Node[oldTable.length << 1];
+        System.out.println("当前size为：" + size + ", " + oldTable.length  + "扩容为: " + table.length);
+
+        Queue<Node<K, V>> queue = new LinkedList<>();
+        for (int i = 0; i < oldTable.length; i++) {
+
+            if (oldTable[i] == null)
+                continue;
+
+            queue.offer(oldTable[i]);
+            Node<K, V> node;
+            while (!queue.isEmpty()) {
+                node = queue.poll();
+               
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+
+                // 挪动的代码放到最后面。因为进入moveNode之后会断掉所有属性
+                moveNode(node);
+            }
+        }
+
+
+    }
+
+    // 挪动
+    private void moveNode(Node<K,V> newNode){
+        // 重置
+        newNode.parent = null;
+        newNode.left = null;
+        newNode.right = null;
+        newNode.color = RED;
+
+        int index = index(newNode);
+        Node<K, V> root = table[index];
+        if (root == null) { // 如果index位置还没有红黑树
+            root = newNode;
+            table[index] = root;
+            afterPut(root); // 修复红黑树
+            return;
+        }
+
+        // index位置已经有红黑树节点 -- 已经哈希冲突
+        // 添加的不是第一个节点
+        // 找到父节点
+        Node<K, V> parent = root;
+        Node<K, V> node = root;
+        int cmp = 0;
+        K k1 = newNode.key;
+        int h1 = newNode.hashCode;
+        do {
+            parent = node;
+            K k2 = node.key;
+            int h2 = node.hashCode;
+            if (h1 > h2) {
+                cmp = 1;
+            } else if (h1 < h2) {
+                cmp = -1;
+            }else if (k1 != null && k2 != null && k1.getClass() == k2.getClass() && k1 instanceof Comparable
+                    && (cmp = ((Comparable<K>) k1).compareTo(k2)) != 0) {
+                // 由于存在两个对象不equals，但是compareTo为0的情况，这种情况下，不能认为
+                // 两个对象是同一个对象，所以不能将cmp赋值为0在此结束，而是要继续想想比较
+                // 当然，如果cmp!=0，可以直接跳转到node转向的代码
+            }else {
+                cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
+            }
+
+            if (cmp > 0) {
+                node = node.right;
+            } else if (cmp < 0) {
+                node = node.left;
+            }
+        } while (node != null);
+
+        // 看看插入到父节点的哪个位置
+        newNode.parent = parent;
+        if (cmp > 0) {
+            parent.right = newNode;
+        } else {
+            parent.left = newNode;
+        }
+        
+
+        // 新添加节点之后的处理
+        afterPut(newNode);
     }
 
     // 红黑树删除节点

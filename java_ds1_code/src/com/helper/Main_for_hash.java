@@ -54,12 +54,12 @@ public class Main_for_hash {
         for (int i = 0; i < 10; i++) {
             map.put(new Key(i), i);
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10000012; i++) {
             map.put(new Key(i), i+10);
         }
         System.out.println(map.size());
         System.out.println(map.get(new Key(1)));
-        map.print();
+        // map.print();
 
     }
 }
