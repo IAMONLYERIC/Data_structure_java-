@@ -1,6 +1,5 @@
 package com.bjtu.Map;
 
-import java.security.Key;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -62,10 +61,36 @@ public class HashMap<K, V> implements Map<K, V> {
         Node<K, V> parent = root;
         Node<K, V> node = root;
         int cmp = 0;
-        int keyHashCode = key == null ? 0 : key.hashCode();
+        K k1 = key;
+        int h1 = k1 == null ? 0 : k1.hashCode();
+        Node<K,V>result = null;
         do {
-            cmp = compare(key, node.key, keyHashCode, node.hashCode);
             parent = node;
+            K k2 = node.key;
+            int h2 = node.hashCode;
+            if(h1 > h2){
+                cmp = 1;
+            }else if (h1 < h2){
+                cmp = -1;
+            }else if(Objects.equals(k1, k2)){ // hash相等
+                 cmp = 0;
+            }else if(k1 != null && k2 != null
+                && k1.getClass() == k2.getClass()
+                && k1 instanceof Comparable){
+                
+                cmp = ((Comparable)k1).compareTo(k2);
+            }else{ // 线扫描，然后根据内存地址大小决定左右
+                if((node.left != null && (result = node(node.left, k1))!=null)
+                    || (node.right != null && (result = node(node.right, k1))!=null)
+                ){
+                    cmp = 0;
+                    node = result; // 为了套用后面cmp = 0的代码
+                }else { // 不存在这个key
+                    cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
+
+                }
+            }
+            
             if (cmp > 0) {
                 node = node.right;
             } else if (cmp < 0) {
@@ -152,7 +177,8 @@ public class HashMap<K, V> implements Map<K, V> {
             Node<K, V> node;
             while (!queue.isEmpty()) {
                 node = queue.poll();
-                if(visitor.visit(node.key, node.value)) return;
+                if (visitor.visit(node.key, node.value))
+                    return;
                 if (node.left != null) {
                     queue.offer(node.left);
                 }
@@ -164,13 +190,14 @@ public class HashMap<K, V> implements Map<K, V> {
 
     }
 
-    public void print(){
-        if(size == 0) return;
+    public void print() {
+        if (size == 0)
+            return;
         for (int i = 0; i < table.length; i++) {
-            
-            final Node<K,V> root = table[i];
-            System.out.println("【index:" + i +  "】");
-            BinaryTrees.println(new BinaryTreeInfo(){
+
+            final Node<K, V> root = table[i];
+            System.out.println("【index:" + i + "】");
+            BinaryTrees.println(new BinaryTreeInfo() {
                 @Override
                 public Object root() {
                     return root;
@@ -178,18 +205,18 @@ public class HashMap<K, V> implements Map<K, V> {
 
                 @Override
                 public Object left(Object node) {
-                    return ((Node<K, V>)node).left;
+                    return ((Node<K, V>) node).left;
                 }
 
                 @Override
                 public Object right(Object node) {
-                    return ((Node<K, V>)node).right;
+                    return ((Node<K, V>) node).right;
                 }
 
                 @Override
                 public Object string(Object node) {
                     return node;
-                }  
+                }
             });
             System.out.println("-------------------------------------------------------------");
 
@@ -320,12 +347,7 @@ public class HashMap<K, V> implements Map<K, V> {
 
         // hashcode一样，但是key不同
         // 此时再比较类名
-        if (k1 != null && k2 != null) {
-            String k1ClassName = k1.getClass().getName();
-            String k2ClassName = k2.getClass().getName();
-            res = k1ClassName.compareTo(k2ClassName);
-            if (res != 0)
-                return res;
+        if (k1 != null && k2 != null && k1.getClass() == k2.getClass()) {
 
             // 同一个类型
             // 在看看这个类型是否实现了可比较的接口
@@ -537,17 +559,47 @@ public class HashMap<K, V> implements Map<K, V> {
 
     // 根据给定的key 寻找存放该key的节点
     private Node<K, V> node(K key) {
-        Node<K, V> node = table[index(key)];
-        int h1 = key == null ? 0 : key.hashCode();
+        Node<K, V> root = table[index(key)];
+        return root == null ? null : node(root, key);
+
+    }
+
+    private Node<K, V> node(Node<K, V> node, K k1) {
+        int h1 = k1 == null ? 0 : k1.hashCode();
+        Node<K, V> result = null;
         while (node != null) {
-            int cmp = compare(key, node.key, h1, node.hashCode);
-            if (cmp == 0)
-                return node;
-            if (cmp > 0) {
+            int h2 = node.hashCode;
+            K k2 = node.key;
+
+            // 先比较hash值 不用相减是因为哈希有负数，相减可能造成正数相加溢出
+            if (h1 > h2) {
                 node = node.right;
-            } else if (cmp < 0) {
+            } else if (h1 < h2) {
                 node = node.left;
+            } else if (Objects.equals(k1, k2)) {
+                return node;
+            } else if (k1 != null && k2 != null && k1 instanceof Comparable) {
+
+                int cmp = ((Comparable) k1).compareTo(k2);
+
+                if (cmp > 0) {
+                    node = node.right;
+                } else if (cmp < 0) {
+                    node = node.left;
+                } else {
+                    return node;
+                }
+
+            } else if (node.right != null && (result = node(node.right, k1)) != null) { // hash相等 不具备可比较性 也不equals 或者 k1
+                                                                                        // k2其中一个为null
+                return result;
+            } else if (node.left != null && (result = node(node.left, k1)) != null) { // hash相等 不具备可比较性 也不equals 或者 k1
+                                                                                      // k2其中一个为null
+                return result;
+            }else {
+                return null;
             }
+
         }
         return null;
     }
@@ -599,9 +651,8 @@ public class HashMap<K, V> implements Map<K, V> {
         @Override
         public String toString() {
             return "k:" + key + "_V:" + value;
-    }
+        }
 
     }
 
-    
 }
