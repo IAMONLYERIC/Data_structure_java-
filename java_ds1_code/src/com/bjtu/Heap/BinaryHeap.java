@@ -9,7 +9,7 @@ import com.bjtu.Tree.Printer.BinaryTreeInfo;
  */
 
 @SuppressWarnings("unchecked")
-public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
+public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
 
     public Object[] elements;
     private static final int DEFAULT_CAPACITY = 10;
@@ -20,10 +20,30 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
     }
 
     public BinaryHeap() {
-        this(null);
+        this((Comparator<E>) null);
     }
 
-   
+    public BinaryHeap(E[] elements, Comparator<E> comparator) {
+        super(comparator);
+
+        if (elements == null || elements.length == 0) {
+            this.elements = new Object[DEFAULT_CAPACITY];
+        } else {
+            this.size = elements.length;
+            this.elements = new Object[elements.length > DEFAULT_CAPACITY ? elements.length : DEFAULT_CAPACITY];
+            
+            for (int i = 0; i < elements.length; i++) {
+                this.elements[i] = elements[i];
+            }
+            
+            heapify(); // 调整
+            
+        }
+    }
+
+    public BinaryHeap(E[] elements) {
+        this(elements, null);
+    }
 
     @Override
     public void clear() {
@@ -45,7 +65,7 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
     @Override
     public E get() {
         emptyCheck();
-        return (E)elements[0];
+        return (E) elements[0];
     }
 
     @Override
@@ -55,7 +75,7 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
         // 先让数组最后一个位置的元素覆盖堆顶元素，然后删除最后一个位置。并从堆顶开始下溢
         E root = (E) elements[0];
         elements[0] = elements[size - 1];
-        elements[size -1] = null;
+        elements[size - 1] = null;
         size--;
         siftDown(0);
         return root;
@@ -64,31 +84,42 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
     // 用remove和add实现，但是效率不高, 2*log(n)
     // @Override
     // public E replace(E element) {
-    //     E root = remove();
-    //     add(element);
-    //     return root;
+    // E root = remove();
+    // add(element);
+    // return root;
     // }
 
     @Override
     public E replace(E element) {
         ElementNotNullCheck(element);
         E root = null;
-        if(size == 0){
+        if (size == 0) {
             // 第一个元素
             elements[0] = element;
             size++;
-        }else{
+        } else {
             // 新添加的元素覆盖堆顶，然后开始下溢
-            root = (E)elements[0];
+            root = (E) elements[0];
             elements[0] = element;
             siftDown(0);
-            
+
         }
         return root;
     }
-    
 
-    
+
+    private void heapify(){
+        // 自上而下的上溢
+        // for(int i = 1; i < size; i++){
+        //     siftUp(i);
+        // }
+        
+        // 自下而上的下溢
+        for(int i = (size >> 1) -1 ; i >= 0; i--){
+            siftDown(i);
+        }
+    }
+
     private void emptyCheck() {
         if (size == 0) {
             throw new IndexOutOfBoundsException("Heap is empty");
@@ -130,27 +161,28 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
         elements[index] = e;
     }
 
-    private void siftDown(int index){
-        E element = (E)elements[index];
+    private void siftDown(int index) {
+        E element = (E) elements[index];
         int half = size >> 1;
         // index要小于第一个叶子节点索引(非叶子节点的数量) 完全二叉树性质
-        while(index < half){
+        while (index < half) {
             // 1. 只有左子节点
             // 2. 同时有左右子节点
 
             // 默认为左子节点的索引, 用左子节点与index节点进行比较
             int childIndex = (index << 1) + 1;
-            E child = (E)elements[childIndex];
+            E child = (E) elements[childIndex];
 
             // 右子节点
             int rightIndex = childIndex + 1;
-            if(rightIndex < size && compare((E)elements[rightIndex], child) > 0){
+            if (rightIndex < size && compare((E) elements[rightIndex], child) > 0) {
                 childIndex = rightIndex;
                 child = (E) elements[rightIndex];
             }
 
             // 如果要下溢的元素大于等于最大子节点，满足二叉堆性质
-            if(compare(element, child) >= 0) break;
+            if (compare(element, child) >= 0)
+                break;
 
             // 不满足，先把子节点放上去。并继续寻找位置
             elements[index] = child;
@@ -159,9 +191,6 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
         elements[index] = element;
 
     }
-
-
-
 
     @Override
     public Object root() {
@@ -187,7 +216,7 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
 
     @Override
     public Object string(Object node) {
-        return elements[(Integer)node];
+        return elements[(Integer) node];
     }
 
 }
