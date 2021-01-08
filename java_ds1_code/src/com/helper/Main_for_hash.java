@@ -5,7 +5,7 @@ import com.bjtu.Map.Key;
 import com.bjtu.Map.Person;
 
 public class Main_for_hash {
-    public static void main(String[] args) {
+    public static void main_hash(String[] args) {
         // test1();
         test2();
     }
