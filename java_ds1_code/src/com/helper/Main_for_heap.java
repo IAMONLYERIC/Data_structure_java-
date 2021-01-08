@@ -20,6 +20,12 @@ public class Main_for_heap {
         System.out.println(heap.size());
 
         BinaryTrees.println(heap);
+
+        heap.remove();
+        BinaryTrees.println(heap);
+
+        heap.replace(55);
+        BinaryTrees.println(heap);
     }
     
 }

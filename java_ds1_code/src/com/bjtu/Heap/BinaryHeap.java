@@ -8,16 +8,14 @@ import com.bjtu.Tree.Printer.BinaryTreeInfo;
  * 二叉堆（大顶堆） 堆是一个完全二叉树
  */
 
-@SuppressWarnings({ "unchecked", "unused" })
-public class BinaryHeap<E> implements Heap<E>, BinaryTreeInfo {
+@SuppressWarnings("unchecked")
+public class BinaryHeap<E> extends AbstractHeap<E> implements  BinaryTreeInfo {
+
     public Object[] elements;
-    private int size;
-    private Comparator<E> comparator;
     private static final int DEFAULT_CAPACITY = 10;
 
     public BinaryHeap(Comparator<E> comparator) {
-        this.comparator = comparator;
-        this.size = 0;
+        super(comparator);
         this.elements = new Object[DEFAULT_CAPACITY];
     }
 
@@ -25,15 +23,7 @@ public class BinaryHeap<E> implements Heap<E>, BinaryTreeInfo {
         this(null);
     }
 
-    @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
+   
 
     @Override
     public void clear() {
@@ -55,25 +45,50 @@ public class BinaryHeap<E> implements Heap<E>, BinaryTreeInfo {
     @Override
     public E get() {
         emptyCheck();
-        return (E) elements[0];
+        return (E)elements[0];
     }
 
     @Override
     public E remove() {
-        // TODO Auto-generated method stub
-        return null;
+        emptyCheck();
+
+        // 先让数组最后一个位置的元素覆盖堆顶元素，然后删除最后一个位置。并从堆顶开始下溢
+        E root = (E) elements[0];
+        elements[0] = elements[size - 1];
+        elements[size -1] = null;
+        size--;
+        siftDown(0);
+        return root;
     }
+
+    // 用remove和add实现，但是效率不高, 2*log(n)
+    // @Override
+    // public E replace(E element) {
+    //     E root = remove();
+    //     add(element);
+    //     return root;
+    // }
 
     @Override
     public E replace(E element) {
-        // TODO Auto-generated method stub
-        return null;
+        ElementNotNullCheck(element);
+        E root = null;
+        if(size == 0){
+            // 第一个元素
+            elements[0] = element;
+            size++;
+        }else{
+            // 新添加的元素覆盖堆顶，然后开始下溢
+            root = (E)elements[0];
+            elements[0] = element;
+            siftDown(0);
+            
+        }
+        return root;
     }
+    
 
-    private int compare(E e1, E e2) {
-        return comparator != null ? comparator.compare(e1, e2) : ((Comparable<E>) e1).compareTo(e2);
-    }
-
+    
     private void emptyCheck() {
         if (size == 0) {
             throw new IndexOutOfBoundsException("Heap is empty");
@@ -106,17 +121,46 @@ public class BinaryHeap<E> implements Heap<E>, BinaryTreeInfo {
             int pindex = (index - 1) >> 1;
             E p = (E) elements[pindex];
             if (compare(e, p) <= 0)
-                return;
-
-            // 交换p,e
-            E tmp = (E) elements[index];
-            elements[index] = elements[pindex];
-            elements[pindex] = tmp;
-
+                break;
+            // 将pindex位置元素放到index位置
+            elements[index] = p;
             // 重新复制index
             index = pindex;
         }
+        elements[index] = e;
     }
+
+    private void siftDown(int index){
+        E element = (E)elements[index];
+        int half = size >> 1;
+        // index要小于第一个叶子节点索引(非叶子节点的数量) 完全二叉树性质
+        while(index < half){
+            // 1. 只有左子节点
+            // 2. 同时有左右子节点
+
+            // 默认为左子节点的索引, 用左子节点与index节点进行比较
+            int childIndex = (index << 1) + 1;
+            E child = (E)elements[childIndex];
+
+            // 右子节点
+            int rightIndex = childIndex + 1;
+            if(rightIndex < size && compare((E)elements[rightIndex], child) > 0){
+                childIndex = rightIndex;
+                child = (E) elements[rightIndex];
+            }
+
+            // 如果要下溢的元素大于等于最大子节点，满足二叉堆性质
+            if(compare(element, child) >= 0) break;
+
+            // 不满足，先把子节点放上去。并继续寻找位置
+            elements[index] = child;
+            index = childIndex;
+        }
+        elements[index] = element;
+
+    }
+
+
 
 
     @Override
