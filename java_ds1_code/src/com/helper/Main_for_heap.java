@@ -7,7 +7,7 @@ import com.bjtu.Tree.Printer.BinaryTrees;
 
 public class Main_for_heap {
 
-    public static void main(String[] args) {
+    public static void main_heap(String[] args) {
         // test1();
         // test2();
         // test3();
