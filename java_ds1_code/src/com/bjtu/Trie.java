@@ -5,7 +5,7 @@ import com.bjtu.Map.HashMap;
 public class Trie<V> {
 
     private int size;
-    private Node<V> root = new Node<>();
+    private Node<V> root;
 
     public int size() {
         return size;
@@ -17,30 +17,39 @@ public class Trie<V> {
 
     public void clear() {
         size = 0;
-        root.getChildren().clear();
+        root = null;
 
     }
 
     public V get(String key) {
         Node<V> node = node(key);
-        return node == null ? null : node.value;
+        return node != null && node.word ? node.value : null;
     }
 
     public boolean contains(String key) {
-        return node(key) != null;
+        Node<V> node = node(key);
+        return node != null && node.word;
     }
 
     public V add(String key, V value){
         keyCheck(key);
 
+        if(root == null){
+            // 用到根节点才去创建
+            root = new Node<>(null);
+        }
+
         Node<V> node = root;
         int len = key.length();
         for (int i = 0; i < len; i++) {
             char c = key.charAt(i);
-            Node<V> nextNode = node.getChildren().get(c);
+            boolean emptyChildren = node.children == null;
+            Node<V> nextNode = emptyChildren ? null : node.children.get(c);
             if(nextNode == null){
-                nextNode = new Node<>();
-                node.getChildren().put(c, nextNode);
+                nextNode = new Node<>(node);
+                nextNode.character = c;
+                node.children = emptyChildren ? new HashMap<>() : node.children;
+                node.children.put(c, nextNode);
             }
             node = nextNode;
         }
@@ -59,36 +68,51 @@ public class Trie<V> {
     }
 
     public V remove(String key){
-        return null;
+        // 找到最后一个节点
+        Node<V> node = node(key);
+
+        // 如果不是单词结尾，不用做任何处理
+        if(node == null || !node.word) return null;
+
+        size--;
+        V oldValue = node.value;
+
+        // 要删除的单词是否是其他单词的前缀
+        if(node.children != null && !node.children.isEmpty()){
+            
+            node.word = false;
+            node.value = null;
+            return oldValue;
+        }
+
+        // 没有子节点
+        node.parent.children.remove(node.character);
+        Node<V> parent = null;
+        while((parent = node.parent) != null){
+            parent.children.remove(node.character);
+            if(parent.word || !(parent.children.isEmpty())) break;
+            node = parent;
+        }
+
+        return oldValue;
     }
 
     public boolean startsWith(String prefix){
-        keyCheck(prefix);
-        if(root == null) return false;
-
-        Node<V> node = root;
-        int len = prefix.length();
-        for (int i = 0; i < len; i++) {
-            char c = prefix.charAt(i);
-            node = node.getChildren().get(c);
-            if(node == null) return false;
-        }
-        return true;
+        return node(prefix) != null;
     }
 
     private Node<V> node(String key){
-        if(root == null) return null;
         keyCheck(key);
 
         Node<V> node = root;
         int len = key.length();
         for (int i = 0; i < len; i++) {
+            if(node == null || node.children == null || node.children.isEmpty()) return null;
             char c = key.charAt(i);
-            node = node.getChildren().get(c);
-            if(node == null) return null;
+            node = node.children.get(c);
         }
 
-        return node.word ? node : null;
+        return node;
     }
     
 
@@ -101,12 +125,14 @@ public class Trie<V> {
 
 
     private static class Node<V> {
+        Character character;
+        Node<V> parent;
         HashMap<Character, Node<V>> children;
         V value;     // 放在word为true的节点中
         boolean word; // 判断是否为单词的结尾
 
-        HashMap<Character, Node<V>> getChildren(){
-            return children == null ? (children = new HashMap<>()) : children;
+        public Node(Node<V> parent){
+            this.parent = parent;
         }
     }
 
