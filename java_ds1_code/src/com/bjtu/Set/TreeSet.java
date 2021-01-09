@@ -53,8 +53,9 @@ public class TreeSet<E> implements Set<E> {
         rbtree.inOrderTraverSal(new BinaryTree.Visitor<E>(){
 
 			@Override
-			public void visit(E element) {
-				visitor.visit(element);
+			public boolean visit(E element) {
+                visitor.visit(element);
+                return false;
 
 			}
             

@@ -1,6 +1,8 @@
 package com.bjtu.Tree;
 
 import java.util.LinkedList;
+import java.util.Stack;
+
 import com.bjtu.Tree.Printer.BinaryTreeInfo;
 
 @SuppressWarnings("unchecked")
@@ -49,7 +51,9 @@ public class BinaryTree<E> implements BinaryTreeInfo {
     }
 
     public static interface Visitor<E> {
-        public void visit(E element);
+        public boolean stop = false;
+
+        public boolean visit(E element);
     }
 
     public int size() {
@@ -71,6 +75,50 @@ public class BinaryTree<E> implements BinaryTreeInfo {
         }
     }
 
+    // 非递归版本的前序遍历
+    public void preOrderLoop(Visitor<E> visitor) {
+        // 用栈来实现前序遍历，一路向左，先访问节点
+        if (visitor == null || root == null)
+            return;
+        Node<E> node = root;
+        Stack<Node<E>> stack = new Stack<>();
+
+        while (true) {
+            if(node != null){
+                if (visitor.visit(node.element) == true)return;
+                if(node.right != null){
+                    stack.push(node.right);
+                }
+                node = node.left;
+            }else if(stack.isEmpty()){
+                return;
+            }else{
+                node = stack.pop();
+            }
+            
+        }
+           
+    }
+     // 非递归版本的前序遍历
+     public void preOrderLoop2(Visitor<E> visitor) {
+        // 用栈来实现前序遍历，一路向左，先访问节点
+        if (visitor == null || root == null)
+            return;
+        Stack<Node<E>> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            Node<E> node = stack.pop();
+            if (visitor.visit(node.element)) return;
+            if(node.right != null){
+                stack.push(node.right);
+            }
+            if(node.left != null){
+                stack.push(node.left);
+            }
+        }
+           
+    }
+
     public void preOrderTraverSal(Visitor<E> visitor) {
         preOrderTraverSal(root, visitor);
     }
@@ -84,6 +132,31 @@ public class BinaryTree<E> implements BinaryTreeInfo {
         preOrderTraverSal(node.right, visitor);
     }
 
+    // 非递归实现中序遍历
+    public void inOrderLoop(Visitor<E> visitor){
+         // 用栈来实现前序遍历，一路向左，先访问节点
+         if (visitor == null || root == null)
+         return;
+        Node<E> node = root;
+        Stack<Node<E>> stack = new Stack<>();
+
+        while(true){
+            if(node != null){
+                stack.push(node);
+                node = node.left;
+            }else if(stack.isEmpty()){
+                return;
+            }else{
+                node = stack.pop();
+                if(visitor.visit(node.element)) return;
+
+                node = node.right;
+            }
+            
+            
+        }
+    }
+
     public void inOrderTraverSal(Visitor<E> visitor) {
         inOrderTraverSal(root, visitor);
     }
@@ -95,6 +168,30 @@ public class BinaryTree<E> implements BinaryTreeInfo {
         inOrderTraverSal(node.left, visitor);
         visitor.visit(node.element);
         inOrderTraverSal(node.right, visitor);
+    }
+
+    public void postOrderLoop(Visitor<E> visitor){
+        if (visitor == null || root == null) return;
+        Stack<Node<E>> stack = new Stack<>();
+        stack.push(root);
+        Node<E> prev = null;
+        while(!stack.isEmpty()){
+            Node<E> top = stack.peek();
+
+            if(top.isLeaf() || (prev != null && prev.parent == top)){
+                prev = stack.pop();
+                if(visitor.visit(prev.element)) return;
+            }else{
+                if(top.right != null){
+                    stack.push(top.right);
+                }
+    
+                if(top.left != null){
+                    stack.push(top.left);
+                }
+            }  
+        }
+
     }
 
     public void postOrderTraverSal(Visitor<E> visitor) {
@@ -129,7 +226,7 @@ public class BinaryTree<E> implements BinaryTreeInfo {
         Node<E> topNode;
         while (!queue.isEmpty()) {
             topNode = queue.poll();
-            visitor.visit(topNode.element);
+            if(visitor.visit(topNode.element)==true) return;
 
             if (topNode.left != null) {
                 queue.offer(topNode.left);

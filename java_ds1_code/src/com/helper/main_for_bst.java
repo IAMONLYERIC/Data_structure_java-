@@ -11,7 +11,7 @@ import com.bjtu.Tree.Printer.BinaryTrees.PrintStyle;
 public class main_for_bst {
 
     
-    public static void main_for_bst_(String[] args) {
+    public static void main(String[] args) {
 
         // test1();
 
@@ -63,15 +63,79 @@ public class main_for_bst {
             bst1.add(integer);
         }
 
-        BinaryTrees.println(bst1);
-        // bst1.preOrderTraverSal();
-        // bst1.inOrderTraverSal();
-        // bst1.postOrderTraverSal();
+
+        // BinaryTrees.println(bst1);
+        bst1.preOrderTraverSal(new Visitor<Integer>(){
+
+            @Override
+            public boolean visit(Integer element) {
+                System.out.println(" _" + element + "_ " );
+                return false;
+            }
+            
+        });
+
+        bst1.preOrderLoop(new Visitor<Integer>(){
+
+            @Override
+            public boolean visit(Integer element) {
+                System.out.println(" _" + element + "_ " );
+                return false;
+            }
+            
+        });
+
+        bst1.preOrderLoop2(new Visitor<Integer>(){
+
+            @Override
+            public boolean visit(Integer element) {
+                System.out.println(" _" + element + "_ " );
+                return false;
+            }
+            
+        });
+        // bst1.inOrderTraverSal(new Visitor<Integer>(){
+
+        //     @Override
+        //     public boolean visit(Integer element) {
+        //         System.out.println(" _" + element + "_ " );
+        //         return false;
+        //     }
+            
+        // });
+        // bst1.inOrderLoop(new Visitor<Integer>(){
+
+        //     @Override
+        //     public boolean visit(Integer element) {
+        //         System.out.println(" _" + element + "_ " );
+        //         return false;
+        //     }
+            
+        // });
+        // bst1.postOrderTraverSal(new Visitor<Integer>(){
+
+        //     @Override
+        //     public boolean visit(Integer element) {
+        //         System.out.println(" _" + element + "_ " );
+        //         return false;
+        //     }
+            
+        // });
+        // bst1.postOrderLoop(new Visitor<Integer>(){
+
+        //     @Override
+        //     public boolean visit(Integer element) {
+        //         System.out.println(" _" + element + "_ " );
+        //         return false;
+        //     }
+            
+        // });
         // bst1.levelOrderTraverSal(new Visitor<Integer>(){
 
         //     @Override
-        //     public void visit(Integer element) {
+        //     public boolean visit(Integer element) {
         //         System.out.print(" _" + element + "_ " );
+        //         return false;
 
         //     }
 
@@ -84,8 +148,8 @@ public class main_for_bst {
 
         // System.out.println(bst1.isCompleteBT());
 
-        bst1.invertBT();
-        BinaryTrees.println(bst1);
+        // bst1.invertBT();
+        // BinaryTrees.println(bst1);
 
 
     }
